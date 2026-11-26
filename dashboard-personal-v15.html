@@ -1,0 +1,2991 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>داشبورد شخصی پشتیبانی</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@majidh1/jalalidatepicker@1.0.0/dist/jalalidatepicker.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/@majidh1/jalalidatepicker@1.0.0/dist/jalalidatepicker.min.js"></script>
+<style>
+:root{
+  --bg:#0f172a; --card:#1e293b; --card2:#334155; --text:#f1f5f9; --muted:#94a3b8;
+  --teal:#14b8a6; --green:#22c55e; --amber:#f59e0b; --red:#ef4444; --blue:#3b82f6;
+  --border:#334155; --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.55}
+button,input,select,textarea{font-family:inherit}
+a{color:var(--teal);text-decoration:none}a:hover{text-decoration:underline}
+
+.top{background:linear-gradient(135deg,#0f172a,#1e293b);padding:.85rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.brand{font-weight:700;font-size:1.1rem;display:flex;align-items:center;gap:.5rem}
+.nav{display:flex;gap:.35rem;flex-wrap:wrap}
+.nav button{background:transparent;border:1px solid transparent;color:var(--muted);padding:.4rem .75rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600}
+.nav button:hover,.nav button.on{background:var(--card2);color:#fff;border-color:var(--border)}
+.clock-wrap{min-width:90px;font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:800;letter-spacing:.04em}
+
+.wrap{max-width:1200px;margin:0 auto;padding:1rem}
+.page{display:none}.page.on{display:block}
+
+.card{background:rgba(30,41,59,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:var(--radius);padding:1.1rem;border:1px solid rgba(255,255,255,.12);margin-bottom:1rem}
+.card h3{font-size:.95rem;margin-bottom:.7rem;color:#e2e8f0}
+.sub{font-size:.8rem;color:var(--muted);margin-bottom:.6rem}
+.tile{background:var(--card2);border-radius:12px;padding:1rem}
+.tile h4{font-size:.82rem;color:var(--muted);margin-bottom:.35rem}
+.tile .big{font-size:1.6rem;font-weight:800}
+.muted{color:var(--muted);font-size:.82rem}
+.daily{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.85rem;margin-bottom:1rem}
+
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+@media(max-width:800px){.charts{grid-template-columns:1fr}}
+.chart-box{height:220px;position:relative}
+
+.btn{display:inline-flex;align-items:center;gap:.3rem;padding:.45rem .85rem;border-radius:8px;border:none;font-size:.84rem;font-weight:600;cursor:pointer;background:var(--teal);color:#0f172a}
+.btn:hover{filter:brightness(1.08)}.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text)}.btn.small{padding:.3rem .6rem;font-size:.78rem}.btn.danger{background:var(--red);color:#fff}
+
+.filters{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.85rem}
+.filters input,.filters select{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:.45rem .65rem;border-radius:8px;font-size:.84rem}
+.filters input{flex:1;min-width:160px}
+
+.task{display:flex;gap:.5rem;padding:.45rem .65rem;border:1px solid var(--border);border-radius:8px;margin-bottom:.3rem;background:var(--card2);align-items:center;cursor:pointer;transition:.15s}
+.task:hover{border-color:var(--teal)}
+.task .ico{width:26px;height:26px;border-radius:7px;background:rgba(20,184,166,.15);color:var(--teal);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.task .ico svg{width:14px;height:14px}
+.task .body{flex:1;min-width:0;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.task .title{font-weight:600;font-size:.86rem;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.task .meta{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:.3rem;flex-wrap:wrap}
+.task .prog-bar{height:4px;min-width:50px;max-width:70px;margin:0;flex-shrink:0}
+.task-list-compact{max-height:none}
+.task-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.35rem}
+@media(max-width:600px){.task .title{max-width:140px}.task-grid{grid-template-columns:1fr}}
+.badge{display:inline-block;padding:.08rem .38rem;border-radius:999px;font-size:.68rem;font-weight:700}
+.b-open,.b-جدید{background:rgba(59,130,246,.2);color:#93c5fd}
+.b-done{background:rgba(34,197,94,.2);color:#86efac}
+.b-wait{background:rgba(245,158,11,.2);color:#fcd34d}
+.b-high,.b-زیاد{background:rgba(239,68,68,.2);color:#fca5a5}
+.b-عادی{background:rgba(148,163,184,.2);color:#cbd5e1}
+.b-کم{background:rgba(34,197,94,.15);color:#86efac}
+
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:100;padding:.75rem}
+.modal-bg.open{display:flex}
+.modal{background:rgba(30,41,59,.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border:1px solid var(--border)}
+.modal-h{padding:1rem 1.2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-h h2{font-size:1.05rem}.modal-b{padding:1.1rem 1.2rem}.modal-f{padding:.85rem 1.2rem;border-top:1px solid var(--border);display:flex;gap:.5rem;flex-wrap:wrap}
+.fg{display:grid;gap:.7rem}.fg label{font-size:.8rem;color:var(--muted);display:block;margin-bottom:.25rem}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:.5rem .65rem;border-radius:8px;font-size:.88rem}
+.fg textarea{min-height:70px;resize:vertical}
+.x{background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer}
+
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .hd{text-align:center;font-size:.75rem;color:var(--muted);padding:.35rem}
+.cal .day{aspect-ratio:1;border-radius:10px;background:var(--card2);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.85rem;cursor:pointer;border:1px solid transparent;position:relative}
+.cal .day:hover{border-color:var(--teal)}.cal .day.today{background:rgba(20,184,166,.2);border-color:var(--teal)}.cal .day.sel{outline:2px solid var(--teal)}.cal .day.has::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--amber);position:absolute;bottom:5px}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem}
+
+.contact{display:flex;justify-content:space-between;align-items:center;padding:.75rem;border:1px solid var(--border);border-radius:10px;margin-bottom:.45rem;background:var(--card2)}
+.contact .name{font-weight:700}.contact .nums{font-size:.82rem;color:var(--muted);direction:ltr;text-align:left}
+
+.log{font-size:.8rem;color:var(--muted);border-right:2px solid var(--border);padding-right:.7rem;margin:.4rem 0}
+.log b{color:var(--text)}
+
+.toast{position:fixed;bottom:1.2rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card2);color:#fff;padding:.7rem 1.2rem;border-radius:10px;z-index:200;opacity:0;transition:.25s;border:1px solid var(--border);font-size:.88rem}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+.hrs{display:flex;gap:.4rem;overflow-x:auto;margin-top:.5rem}
+.hr{background:rgba(0,0,0,.2);padding:.35rem .5rem;border-radius:8px;font-size:.75rem;text-align:center;min-width:48px}
+.hr b{display:block;font-size:.9rem}
+.pr{display:flex;justify-content:space-between;padding:.35rem 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.88rem}
+.pr:last-child{border:none}
+.empty{text-align:center;padding:2rem;color:var(--muted)}
+.row{display:flex;gap:.4rem;flex-wrap:wrap}
+.prog-bar{height:6px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-top:.35rem}
+.prog-bar i{display:block;height:100%;background:var(--teal);border-radius:4px}
+.price-links{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+.price-links a{font-size:.78rem;background:rgba(20,184,166,.15);padding:.25rem .55rem;border-radius:6px}
+.jdp-container{font-family:Vazirmatn,Tahoma,sans-serif!important;z-index:300!important}
+.b-run{background:rgba(20,184,166,.2);color:#5eead4}
+.b-cat{background:rgba(148,163,184,.15);color:#cbd5e1}
+.cat-h{font-weight:700;margin:.9rem 0 .4rem;color:#e2e8f0;border-bottom:1px solid var(--border);padding-bottom:.25rem}
+.glass{background:rgba(30,41,59,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12)}
+body{overflow-x:hidden}
+.exp-box{padding:.9rem;border-radius:12px;margin-bottom:.8rem}
+.exp-checks{display:flex;flex-wrap:wrap;gap:.45rem;margin:.5rem 0}
+.chk{display:inline-flex;align-items:center;gap:.35rem;background:rgba(51,65,85,.7);border:1px solid var(--border);padding:.35rem .6rem;border-radius:8px;font-size:.84rem;cursor:pointer}
+.search{width:100%;background:rgba(51,65,85,.7);border:1px solid var(--border);color:var(--text);padding:.5rem .7rem;border-radius:8px;margin-bottom:.4rem}
+.stake-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.6rem}
+.stake-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.75rem;margin-top:.6rem}
+.stake-card{padding:.9rem;border-radius:12px;background:rgba(51,65,85,.5);border:1px solid rgba(255,255,255,.12);min-width:0;backdrop-filter:blur(8px)}
+.stake-card h4{font-size:.8rem;margin:.6rem 0 .2rem}
+.bank-row{display:flex;align-items:center;justify-content:space-between;gap:.4rem;padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.06);flex-wrap:wrap;min-width:0}
+.num{direction:ltr;text-align:left;font-variant-numeric:tabular-nums;font-size:.84rem;word-break:break-all;flex:1;min-width:0}
+
+/* ===== v15: Nature Glassmorphism (فقط لایه نمایش) ===== */
+:root{
+  --bg:transparent; --card:rgba(30,55,60,.36); --card2:rgba(45,80,80,.40);
+  --text:#F5F4EF; --muted:#D6E4DF; --teal:#83B8AA; --blue:#7FAFC0; --amber:#E0B26A;
+  --border:rgba(255,255,255,.24); --radius:18px;
+}
+html{background:#2c4a45}
+body{background:transparent;text-shadow:0 1px 2px rgba(0,0,0,.22)}
+.top{background:rgba(30,55,60,.30);backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);border-bottom:1px solid rgba(255,255,255,.2)}
+.card,.modal,.stake-card,.exp-box{background:var(--card);backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);border:1px solid var(--border);box-shadow:0 10px 30px rgba(15,35,35,.18);transition:box-shadow .25s,transform .25s}
+.card:hover{box-shadow:0 14px 36px rgba(15,35,35,.26)}
+.modal{background:rgba(30,55,60,.55)}
+.tile,.contact,.task{background:rgba(45,80,80,.38);border-color:rgba(255,255,255,.18)}
+.task:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.45)}
+.btn{box-shadow:0 4px 14px rgba(15,35,35,.18);transition:filter .2s,transform .15s}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);color:var(--text)}
+.btn.danger{background:#B5533C}
+.filters input,.filters select,.fg input,.fg select,.fg textarea,.search{background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.28)!important;color:var(--text)}
+.fg label,.muted{color:var(--muted)}
+.chk,.cat-h{color:var(--text)}
+.toast{background:rgba(30,55,60,.85);backdrop-filter:blur(12px)}
+.jdp-container{background:rgba(30,55,60,.9)!important}
+.b-done{background:rgba(131,184,170,.25);color:#D9F3EC}
+.b-run{background:rgba(131,184,170,.2);color:#D9F3EC}
+#natureBg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.nb-layer{position:absolute;inset:-3%;background-size:cover;background-position:center;opacity:0;transition:opacity 3s ease-in-out}
+.nb-layer.on{opacity:1;animation:nbZoom 40s ease-in-out infinite alternate}
+.nb-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,45,45,.28),rgba(20,45,45,.42))}
+@keyframes nbZoom{from{transform:scale(1)}to{transform:scale(1.04)}}
+@media (prefers-reduced-motion: reduce){.nb-layer,.nb-layer.on{transition:none!important;animation:none!important}.card,.task,.btn{transition:none!important}}
+
+/* ===== v16: تم سبز Ayurveda (فقط رنگ‌ها) + نمای موبایل ===== */
+:root{
+  --forest:#0F2A1E; --deep:#16392A; --leaf:#2E6B47; --mint:#7FD19A; --sage:#A9C9B2;
+  --bg:transparent; --card:rgba(22,57,42,.46); --card2:rgba(31,77,51,.42);
+  --text:#EEF5EE; --muted:#A9C4B0;
+  --teal:#7FD19A; --blue:#8CC9A8; --amber:#D8B46A; --red:#E0705A;
+  --border:rgba(255,255,255,.12); --radius:18px;
+}
+html{background:#0F2A1E}
+body{background:transparent;color:var(--text)}
+.top{background:rgba(15,42,30,.55)!important;border-bottom:1px solid rgba(127,209,154,.15)}
+.card,.modal,.stake-card,.exp-box{background:var(--card)!important;border:1px solid var(--border)!important;box-shadow:0 10px 30px rgba(5,20,12,.35)!important}
+.card:hover{box-shadow:0 14px 36px rgba(5,20,12,.45)!important}
+.modal{background:rgba(15,42,30,.85)!important}
+.tile,.contact,.task{background:rgba(31,77,51,.40)!important;border-color:rgba(127,209,154,.14)!important}
+.task:hover{border-color:rgba(127,209,154,.45)!important}
+.btn{background:linear-gradient(135deg,#3F8F5E,#2A6B45);color:#F4FBF5;box-shadow:0 6px 16px rgba(5,25,15,.35)}
+.btn.ghost{background:rgba(127,209,154,.10);border:1px solid rgba(127,209,154,.35);color:var(--mint)}
+.btn.danger{background:linear-gradient(135deg,#B9583F,#8E3F2C)}
+.filters input,.filters select,.fg input,.fg select,.fg textarea,.search{background:rgba(255,255,255,.07)!important;border:1px solid rgba(127,209,154,.22)!important;color:var(--text)}
+.fg label,.muted{color:var(--muted)}
+.toast{background:rgba(15,42,30,.92);border:1px solid rgba(127,209,154,.25)}
+.b-done,.b-run{background:rgba(127,209,154,.18);color:#D8F5E1}
+.nb-veil{background:linear-gradient(180deg,rgba(8,30,20,.55),rgba(8,30,20,.7))}
+.chk{background:rgba(31,77,51,.5)}
+a{color:var(--mint)}
+/* لیست کرکره‌ای‌ها: گزینه‌ها سبز با متن روشن */
+select{color-scheme:dark;background-color:#16392A!important;color:#EEF5EE!important}
+select option,select optgroup{background-color:#16392A!important;color:#EEF5EE!important}
+select option:checked,select option:hover{background-color:#2E6B47!important;color:#F4FBF5!important}
+
+/* نمای موبایل */
+@media (max-width:600px){
+  body{font-size:14px}
+  .card{padding:.8rem!important;border-radius:16px!important}
+  .stake-grid{grid-template-columns:1fr!important}
+  .stake-top,.exp-box .stake-top{flex-direction:column;align-items:stretch}
+  .row{flex-wrap:wrap}
+  .btn{padding:8px 12px;font-size:.82rem}
+  .modal{width:94vw!important;max-width:94vw!important}
+  .exp-checks{gap:.35rem}
+  .chk{padding:.3rem .5rem;font-size:.8rem}
+  .num{font-size:.8rem}
+}
+@media (max-width:380px){
+  .btn{padding:7px 10px;font-size:.78rem}
+}
+.chip-s{display:inline-block;background:rgba(127,209,154,.14);border:1px solid rgba(127,209,154,.3);border-radius:99px;padding:3px 10px;margin:2px;font-size:.8rem}
+.kan-wrap{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.kan-col{min-width:240px;flex:1 0 240px;background:rgba(15,42,30,.35);border:1px solid var(--border);border-radius:14px;padding:8px}
+.kan-h{font-weight:700;margin:4px 4px 8px;font-size:.9rem}
+.kan-drop{min-height:120px;border-radius:10px;padding:4px;transition:background .2s}
+.kan-drop.over{background:rgba(127,209,154,.14);outline:1px dashed var(--mint)}
+.kan-card{background:rgba(31,77,51,.55);border:1px solid rgba(127,209,154,.2);border-radius:12px;padding:10px;margin-bottom:8px;cursor:grab}
+.kan-card.dragging{opacity:.5}
+.kan-t{font-weight:600;font-size:.9rem}.kan-m{font-size:.75rem;margin:4px 0}
+.kan-bar{height:4px;background:rgba(255,255,255,.12);border-radius:4px;overflow:hidden}
+.kan-bar i{display:block;height:100%;background:var(--mint)}
+.kan-mv{justify-content:space-between;margin-top:6px}
+.kan-empty{padding:12px;text-align:center}
+@media (max-width:600px){.kan-col{min-width:200px;flex-basis:200px}}
+</style>
+</head>
+<body>
+<div id="natureBg" aria-hidden="true"><div class="nb-layer" id="nbA"></div><div class="nb-layer" id="nbB"></div><div class="nb-veil"></div></div>
+<header class="top">
+  <div class="brand">📋 داشبورد شخصی پشتیبانی</div>
+  <nav class="nav">
+    <button data-page="dash" class="on">خانه</button>
+    <button data-page="tasks">کارها</button>
+    <button data-page="cal">تقویم</button>
+    <button data-page="contacts">دفترچه تلفن</button>
+    <button data-page="stake">ذی‌نفعان</button>
+    <button data-page="report">گزارش</button>
+    <button data-page="remind">یادآورها</button>
+    <button data-page="notes">یادداشت‌ها</button>
+    <button data-page="focus">تمرکز</button>
+    <button data-page="settings">خروجی / تنظیمات</button>
+  </nav>
+  <span id="cloudBadge" style="font-size:.78rem;font-weight:600"></span>
+  <div class="clock-wrap" id="clockBox"></div>
+</header>
+
+<main class="wrap">
+  <div class="page on" id="page-dash">
+    <div id="smartBox" style="margin-bottom:12px"></div>
+    <div class="daily" id="dailyBox">در حال بارگذاری…</div>
+    <div class="charts">
+      <div class="card"><h3>وضعیت کارها</h3><div class="chart-box"><canvas id="cStatus"></canvas></div></div>
+      <div class="card"><h3>فعالیت ۱۴ روز اخیر</h3><div class="chart-box"><canvas id="cRecent"></canvas></div></div>
+    </div>
+    <div id="remindersBox"></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem;margin-bottom:.5rem">
+        <h3 style="margin:0">همه کارها <span class="muted" id="homeTaskCnt"></span></h3>
+        <select id="homeFilter" onchange="renderHomeTasks()" style="background:var(--card2);border:1px solid var(--border);color:var(--text);padding:.3rem .5rem;border-radius:6px;font-size:.8rem"><option value="">همه (بدون خاتمه یافته)</option><option>جدید</option><option>در حال انجام</option><option>پیگیری</option><option>خاتمه یافته</option></select>
+      </div>
+      <div id="openTasks"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-tasks">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.6rem">
+        <h3 style="margin:0">مدیریت کارها <span class="muted" id="taskCnt"></span></h3>
+        <button class="btn" data-action="addTask">+ کار جدید</button>
+      </div>
+      <div class="filters">
+        <input id="tq" placeholder="جست‌وجو…" oninput="renderTasks()">
+        <select id="tStatus" onchange="renderTasks()"><option value="">همه وضعیت‌ها</option><option>جدید</option><option>در حال انجام</option><option>پیگیری</option><option>خاتمه یافته</option></select>
+        <select id="tPri" onchange="renderTasks()"><option value="">همه اولویت‌ها</option><option>لحظه ای</option><option>فوری</option><option>زیاد</option><option>متوسط</option><option>عادی</option></select>
+        <select id="tCat" onchange="renderTasks()"><option value="">همه دسته‌بندی‌ها</option><option>داخلی</option><option>خودرو</option><option>مدیرعامل</option><option>پشتیبانی</option><option>حراست</option><option>IT</option><option>مالی</option><option>شعبه</option><option>خارجی</option><option>پیمانکار</option><option>سایر</option><option>خدمات</option></select>
+      </div>
+      <div class="row" style="margin-bottom:8px">
+        <button class="btn small" data-action="viewList" id="vwList">فهرست</button>
+        <button class="btn small ghost" data-action="viewKan" id="vwKan">کانبان</button>
+        <button class="btn small ghost" data-action="viewArch" id="vwArch">بایگانی</button>
+        <button class="btn small ghost" data-action="viewTrash" id="vwTrash">سطل زباله</button>
+      </div>
+      <div class="exp-box glass" style="margin-bottom:8px">
+        <div class="row"><input id="qaTitle" placeholder="افزودن سریع کار…" style="flex:1"><select id="qaTpl" style="max-width:180px"><option value="">بدون قالب</option></select><button class="btn small" data-action="quickAdd">افزودن</button></div>
+        <div style="margin-top:8px"><input class="search" id="gsQ" placeholder="جستجو در کارها، زیرکارها، مخاطبان، ذی‌نفعان و دسته‌ها…"><div id="gsRes"></div></div>
+      </div>
+      <div class="exp-box glass">
+        <div class="stake-top" style="margin:0">
+          <strong>خروجی کارها بر اساس وضعیت</strong>
+          <div class="row">
+            <button class="btn small ghost" data-action="xSelAll">انتخاب همه</button>
+            <button class="btn small ghost" data-action="xClearAll">لغو انتخاب همه</button>
+          </div>
+        </div>
+        <div class="exp-checks" id="expChecks"></div>
+        <div class="row">
+          <button class="btn small" data-action="xCSV">CSV وضعیت‌های انتخابی</button>
+          <button class="btn small ghost" data-action="xPDF">PDF وضعیت‌های انتخابی</button>
+          <button class="btn small ghost" data-action="xCSVAll">CSV همه کارها</button>
+          <button class="btn small ghost" data-action="xPDFAll">PDF همه کارها</button>
+        </div>
+        <div class="muted" id="expMsg" style="margin-top:.4rem"></div>
+      </div>
+      <div class="task-grid" id="taskList"></div>
+      <div id="kanbanBox" style="display:none"></div>
+      <div id="extraBox" style="display:none"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-cal">
+    <div class="card">
+      <div class="cal-nav">
+        <button class="btn ghost small" data-action="calPrev">ماه قبل</button>
+        <strong id="calTitle"></strong>
+        <div class="row">
+          <button class="btn ghost small" data-action="calToday">امروز</button>
+          <button class="btn ghost small" data-action="calNext">ماه بعد</button>
+        </div>
+      </div>
+      <div class="cal" id="calGrid"></div>
+      <div id="calDayTasks" style="margin-top:1rem"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-contacts">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem">
+        <h3 style="margin:0">دفترچه تلفن</h3>
+        <button class="btn" data-action="addContact">+ مخاطب جدید</button>
+      </div>
+      <input id="cq" placeholder="جست‌وجوی نام یا شماره…" oninput="renderContacts()" style="width:100%;margin-bottom:.8rem;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:.5rem .7rem;border-radius:8px">
+      <div id="contactList"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-stake">
+    <div class="card glass">
+      <div class="stake-top">
+        <h3 style="margin:0">ذی‌نفعان <span class="muted" id="stCnt"></span></h3>
+        <div class="row">
+          <button class="btn ghost small" data-action="stToggleAll" id="stToggleAllBtn">نمایش اطلاعات بانکی</button>
+          <button class="btn ghost small" data-action="vLock" id="vLockBtn">🔐 بخش بانکی</button>
+          <button class="btn" data-action="stAdd">+ ثبت شخص جدید</button>
+        </div>
+      </div>
+      <input class="search" id="stQ" placeholder="جست‌وجو با نام، تلفن، کارت، حساب یا شبا…" oninput="renderStake()">
+      <div id="stList" class="stake-grid"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-report">
+    <div class="card glass">
+      <div class="stake-top">
+        <h3 style="margin:0">گزارش عملکرد</h3>
+        <div class="row">
+          <select id="rpRange" oninput="renderReport()" style="max-width:160px">
+            <option value="7">۷ روز اخیر</option><option value="30" selected>۳۰ روز اخیر</option><option value="90">۹۰ روز اخیر</option>
+          </select>
+          <button class="btn" data-action="rpCsv">خروجی CSV گزارش</button>
+        </div>
+      </div>
+      <div id="rpBody"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-remind">
+    <div class="card glass">
+      <div class="stake-top"><h3 style="margin:0">مرکز یادآوری</h3></div>
+      <div class="row" style="margin:8px 0">
+        <input id="pTitle" placeholder="یادآوری شخصی، جلسه یا پیگیری…" style="flex:1;min-width:160px">
+        <input id="pAt" type="datetime-local" dir="ltr" style="max-width:200px">
+        <select id="pKind" style="max-width:130px"><option>شخصی</option><option>جلسه</option><option>پیگیری</option></select>
+        <select id="pRecur" style="max-width:130px"><option value="none">بدون تکرار</option><option value="daily">روزانه</option><option value="weekly">هفتگی</option><option value="monthly">ماهانه</option></select>
+        <button class="btn" data-action="addPersonal">افزودن یادآوری</button>
+      </div>
+      <div id="remBody"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-notes">
+    <div class="card glass">
+      <div class="stake-top">
+        <h3 style="margin:0">یادداشت‌ها</h3>
+        <div class="row">
+          <input class="search" id="nSearch" placeholder="جستجو در عنوان، متن، برچسب…" style="max-width:260px;margin:0">
+          <select id="nCat" style="max-width:150px"></select>
+          <button class="btn" data-action="ntNew">+ یادداشت جدید</button>
+        </div>
+      </div>
+      <div id="noteList" class="stake-grid"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-focus">
+    <div class="card glass" style="text-align:center">
+      <h3 style="margin:0 0 8px">حالت تمرکز</h3>
+      <div class="row" style="justify-content:center;margin-bottom:10px">
+        <select id="fcSel" style="max-width:320px"></select>
+        <label style="display:flex;gap:.35rem;align-items:center;color:var(--text)"><input type="checkbox" id="pomoOn" style="width:auto"> پومودورو (۲۵ + ۵ دقیقه)</label>
+      </div>
+      <div id="fcPhase" class="muted" style="margin-bottom:4px"></div>
+      <div id="fcClock" style="font-size:3.2rem;font-weight:800;letter-spacing:2px;direction:ltr;font-variant-numeric:tabular-nums">00:00</div>
+      <div id="fcSum" class="muted" style="margin:6px 0 12px"></div>
+      <div class="row" style="justify-content:center">
+        <button class="btn" data-action="fcStart" id="fcStartBtn">شروع</button>
+        <button class="btn ghost" data-action="fcPause" id="fcPauseBtn">توقف موقت</button>
+        <button class="btn danger" data-action="fcFinish" id="fcFinishBtn">پایان و ثبت</button>
+      </div>
+      <h4 class="muted" style="margin:16px 0 4px;text-align:right">تاریخچه تمرکز</h4>
+      <div id="fcHist" style="text-align:right"></div>
+    </div>
+  </div>
+
+  <div class="modal-bg" id="noteModal">
+    <div class="modal">
+      <div class="modal-h"><h2 id="noteTitle">یادداشت جدید</h2><button class="x" data-action="ntClose">×</button></div>
+      <div class="modal-b"><div class="fg">
+        <div><label>عنوان</label><input id="nTitle"></div>
+        <div><label>دسته</label><select id="nCatE"></select></div>
+        <div style="grid-column:1/-1"><label>برچسب‌ها (با ویرگول جدا کنید)</label><input id="nTags"></div>
+        <div style="grid-column:1/-1"><label>متن</label><textarea id="nContent" style="min-height:140px"></textarea></div>
+        <div style="grid-column:1/-1"><label>پیوند به کار</label>
+          <div class="row"><select id="nLinkTask" style="flex:1"></select><button class="btn small ghost" type="button" data-action="ntLinkTask">افزودن</button></div></div>
+        <div style="grid-column:1/-1"><label>پیوند به مخاطب</label>
+          <div class="row"><select id="nLinkContact" style="flex:1"></select><button class="btn small ghost" type="button" data-action="ntLinkContact">افزودن</button></div></div>
+        <div style="grid-column:1/-1" id="nLinks"></div>
+      </div></div>
+      <div class="modal-f"><button class="btn" data-action="ntSave">ذخیره</button><button class="btn danger" data-action="ntDel" id="ntDelBtn">حذف</button><button class="btn ghost" data-action="ntClose">انصراف</button></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-settings">
+    <div class="card">
+      <h3>خروجی و تنظیمات</h3>
+      <div class="fg" style="max-width:480px">
+        <div><label>نام شما (برای ثبت تغییرات)</label><input id="setName" placeholder="مثلاً علی"></div>
+        <button class="btn" data-action="saveSettings">ذخیره تنظیمات</button>
+        <hr style="border:none;border-top:1px solid var(--border);margin:.5rem 0">
+        <h4 style="font-size:.9rem;color:#e2e8f0">خروجی کارها</h4>
+        <p class="muted" style="margin:0 0 .5rem">عنوان، وضعیت، اولویت، پیشرفت، تاریخ ایجاد، یادآوری و یادداشت</p>
+        <div class="row">
+          <button class="btn" data-action="exportCSV">خروجی Excel (CSV)</button>
+          <button class="btn ghost" data-action="exportPDF">چاپ / PDF</button>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:.5rem 0">
+        
+        <hr style="border:none;border-top:1px solid var(--border);margin:.8rem 0">
+        <h4 style="font-size:.95rem;color:#e2e8f0;margin:0 0 .4rem">همگام‌سازی ابری (چند دستگاه / چند نفر)</h4>
+        <p class="muted" style="margin:0 0 .6rem;font-size:.82rem;line-height:1.6">
+          با Firebase رایگان، کارها و دفترچه تلفن روی همه گوشی‌ها و رایانه‌ها یکی می‌شود.
+          یک‌بار در <a href="https://console.firebase.google.com/" target="_blank" rel="noopener" style="color:var(--teal)">کنسول Firebase</a>
+          پروژه بسازید، Realtime Database را فعال کنید، و مقادیر زیر را از Project settings کپی کنید.
+        </p>
+        <div class="fg" style="max-width:520px">
+          <div><label>apiKey</label><input id="fbApiKey" placeholder="AIza..." dir="ltr" style="text-align:left"></div>
+          <div><label>authDomain</label><input id="fbAuth" placeholder="xxx.firebaseapp.com" dir="ltr" style="text-align:left"></div>
+          <div><label>databaseURL</label><input id="fbDb" placeholder="https://xxx.firebaseio.com" dir="ltr" style="text-align:left"></div>
+          <div><label>projectId</label><input id="fbPid" placeholder="my-project" dir="ltr" style="text-align:left"></div>
+          <div><label>مسیر داده (اختیاری)</label><input id="fbPath" placeholder="dashboard/shared" dir="ltr" style="text-align:left"></div>
+          <div class="row">
+            <button class="btn" data-action="saveCloud">اتصال و ذخیره ابری</button>
+            <button class="btn ghost" data-action="clearCloud">قطع همگام‌سازی</button>
+          </div>
+          <p class="muted" style="font-size:.78rem">همان مقادیر را در گوشی و رایانهٔ نفر دوم هم وارد کنید تا داده‌ها مشترک شود.</p>
+        </div>
+
+        <h4 style="font-size:.9rem;color:#e2e8f0">تقویم امروز (فایل رویدادها)</h4>
+        <p class="muted" style="margin:0 0 .5rem">فایل JSON رویدادهای شمسی را بارگذاری کنید. این فایل فقط روی همین دستگاه ذخیره می‌شود.</p>
+        <div class="row"><button class="btn ghost" data-action="importEvents">بارگذاری فایل رویدادها</button></div>
+        <input type="file" id="eventsFile" accept=".json" style="display:none">
+        <h4 style="font-size:.9rem;color:#e2e8f0">پشتیبان</h4>
+        <p class="muted" style="margin:0 0 .5rem">فایل JSON شامل کارها، مخاطبان، ذی‌نفعان و تنظیمات است.</p>
+        <div class="row">
+          <button class="btn ghost" data-action="exportData">پشتیبان JSON</button>
+          <button class="btn ghost" data-action="importData">بازیابی از فایل</button>
+        </div>
+        <div class="row" style="margin-top:6px">
+          <button class="btn ghost" data-action="restorePre">بازگشت به نسخه قبل از آخرین بازیابی</button>
+          <button class="btn ghost" data-action="cleanLegacy">حذف نسخه متن‌ساده قدیمی</button>
+        </div>
+        <h4 style="font-size:.9rem;color:#e2e8f0">ساعت سکوت یادآوری‌ها</h4>
+        <div class="row" style="max-width:480px">
+          <input id="qFrom" type="time" dir="ltr" style="max-width:150px"> تا <input id="qTo" type="time" dir="ltr" style="max-width:150px">
+          <button class="btn ghost" data-action="saveQuiet">ذخیره</button>
+        </div>
+        <p class="muted" style="margin:.3rem 0">در این بازه هشدار داده نمی‌شود؛ یادآوری‌ها بعد از پایان ساعت سکوت اعلام می‌شوند.</p>
+        <h4 style="font-size:.9rem;color:#e2e8f0">ویجت‌های صفحه اصلی</h4>
+        <div class="row" id="wgBox" style="max-width:600px"></div>
+        <div class="row" style="margin-top:6px"><button class="btn ghost" data-action="saveWidgets">ذخیره ویجت‌ها</button></div>
+        <p class="muted" style="margin:.4rem 0 0">بک‌آپ JSON شامل کارها، پیوست‌ها (به‌صورت داخلی)، مخاطبان، ذی‌نفعان، تنظیمات و نشانه‌های همگام‌سازی است. شماره‌های بانکی همان‌طور که رمزشده‌اند ذخیره می‌شوند.</p>
+        <input type="file" id="importFile" accept=".json" style="display:none">
+        <h4 style="font-size:.9rem;color:#e2e8f0">پس‌زمینه طبیعت</h4>
+        <div class="fg" style="max-width:480px">
+          <label style="display:flex;gap:.5rem;align-items:center;color:var(--text)"><input type="checkbox" id="nbOn" style="width:auto"> پس‌زمینه متحرک روشن باشد</label>
+          <div><label>سرعت تغییر تصویر</label><select id="nbSpeed"><option value="slow">آرام (هر ۱۲۰ ثانیه)</option><option value="standard">استاندارد (هر ۹۰ ثانیه)</option><option value="fast">سریع‌تر (هر ۶۰ ثانیه)</option></select></div>
+          <div><label>حالت نمایش</label><select id="nbMode"><option value="random">تصادفی</option><option value="ordered">ترتیبی</option></select></div>
+          <div class="row"><button class="btn" data-action="saveBg">ذخیره پس‌زمینه</button></div>
+        </div>
+        <h4 style="font-size:.9rem;color:#e2e8f0">یادآوری در Google Calendar</h4>
+        <div class="fg" style="max-width:480px">
+          <div><label>Client ID (از Google Cloud Console)</label><input id="gcId" dir="ltr" style="text-align:left" placeholder="xxxx.apps.googleusercontent.com"></div>
+          <div class="row"><button class="btn" data-action="gcSave">ذخیره</button><button class="btn ghost" data-action="gcConnect">اتصال به Google</button><button class="btn ghost" data-action="gcSyncNow">همگام‌سازی همه کارها</button></div>
+          <div class="muted" id="gcStatus"></div>
+        </div>
+        <h4 style="font-size:.9rem;color:#e2e8f0">وضعیت همگام‌سازی ابری</h4>
+        <div id="cloudStatus" class="muted"></div>
+        <div class="row" style="margin:6px 0"><button class="btn ghost" data-action="cloudNow">همگام‌سازی اکنون</button></div>
+        <h4 style="font-size:.9rem;color:#e2e8f0">تعارض‌ها</h4>
+        <p class="muted" style="margin:0 0 6px">وقتی یک مورد هم در این دستگاه و هم در دستگاه دیگر تغییر کرده باشد، برنامه هیچ‌کدام را بی‌صدا پاک نمی‌کند؛ هر دو نسخه این‌جا ثبت می‌شوند تا خودت انتخاب کنی.</p>
+        <div id="conflictBox"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Print-only report -->
+  <div id="printReport" style="display:none"></div>
+</main>
+
+<!-- Task Modal -->
+<div class="modal-bg" id="taskModal">
+  <div class="modal">
+    <div class="modal-h"><h2 id="taskModalTitle">کار جدید</h2><button class="x" data-action="closeTask">×</button></div>
+    <div class="modal-b">
+      <div class="fg">
+        <div><label>عنوان *</label><input id="fTitle"></div>
+        <div><label>وضعیت</label><select id="fStatus"><option>جدید</option><option>در حال انجام</option><option>پیگیری</option><option>خاتمه یافته</option></select></div>
+        <div><label>اولویت</label><select id="fPri"><option>لحظه ای</option><option>فوری</option><option>زیاد</option><option>متوسط</option><option selected>عادی</option></select></div>
+        <div><label>دسته‌بندی ۱</label><select id="fCat1"><option>داخلی</option><option>خودرو</option><option>مدیرعامل</option><option>پشتیبانی</option><option>حراست</option><option>IT</option><option>مالی</option><option>شعبه</option><option>خارجی</option><option>پیمانکار</option><option selected>سایر</option><option>خدمات</option></select></div>
+        <div><label>دسته‌بندی ۲ (اختیاری)</label><select id="fCat2"><option value="">—</option><option>داخلی</option><option>خودرو</option><option>مدیرعامل</option><option>پشتیبانی</option><option>حراست</option><option>IT</option><option>مالی</option><option>شعبه</option><option>خارجی</option><option>پیمانکار</option><option>سایر</option><option>خدمات</option></select></div>
+        <div><label>درصد پیشرفت</label><input id="fProg" type="number" min="0" max="100" value="0"></div>
+        <div><label>مهلت (تاریخ شمسی)</label><input id="fDue" data-jdp placeholder="مثلاً ۱۴۰۴/۰۸/۱۵" autocomplete="off"></div>
+        <div><label>ساعت مهلت (اختیاری)</label><input id="fDueTime" type="time"></div>
+        <div><label>یادآوری (تاریخ شمسی)</label><input id="fRem" data-jdp placeholder="مثلاً ۱۴۰۴/۰۸/۱۴" autocomplete="off"></div>
+        <div><label>ساعت یادآوری (اختیاری)</label><input id="fRemTime" type="time"></div>
+        <div style="grid-column:1/-1"><label>زیرکارها</label>
+          <div id="subList" style="margin:4px 0"></div>
+          <div class="row"><input id="subNew" placeholder="عنوان زیرکار" style="flex:1;min-width:140px"><input id="subOwner" placeholder="مسئول" style="max-width:130px"><input id="subDue" type="datetime-local" dir="ltr" style="max-width:200px"><select id="subPri" style="max-width:120px"><option>لحظه ای</option><option>فوری</option><option>زیاد</option><option>متوسط</option><option selected>عادی</option></select></div>
+          <div class="row" style="margin-top:4px"><input id="subNote" placeholder="یادداشت زیرکار" style="flex:1"><button class="btn small ghost" type="button" data-action="addSub">افزودن زیرکار</button></div>
+          <div class="row" style="margin-top:6px"><label style="display:flex;gap:.4rem;align-items:center;color:var(--text)"><input type="checkbox" id="autoProg" checked style="width:auto"> پیشرفت خودکار از روی زیرکارها</label></div>
+          <div class="row" style="margin-top:6px"><button class="btn small ghost" type="button" data-action="dupTask">کپی این کار</button><button class="btn small ghost" type="button" data-action="tplTask">ذخیره به‌عنوان قالب</button><button class="btn small ghost" type="button" data-action="archTask">بایگانی</button></div>
+        </div>
+        <div><label>مسئول</label><input id="fOwner" list="ownerList" placeholder="نام مسئول کار"><datalist id="ownerList"></datalist></div>
+        <div style="grid-column:1/-1"><label>یادآوری‌های بیشتر (میلادی، اختیاری)</label>
+          <div class="row"><input id="fRemNew" type="datetime-local" dir="ltr" style="flex:1"><button class="btn small ghost" type="button" data-action="addRem">افزودن</button></div>
+          <div id="remList" class="muted" style="margin-top:6px"></div>
+          <div class="row" style="margin-top:6px"><label>تکرار یادآوری‌ها</label><select id="fRecur" style="max-width:200px"><option value="none">بدون تکرار</option><option value="daily">روزانه</option><option value="weekly">هفتگی</option><option value="monthly">ماهانه</option></select></div></div>
+        <div style="grid-column:1/-1"><label>پیوست‌ها (هر فایل حداکثر ۱٫۲ مگابایت، مجموع هر کار ۲ مگابایت)</label>
+          <div class="row"><input id="fFile" type="file" style="color:var(--text)"><button class="btn small ghost" type="button" data-action="addAtt">افزودن فایل</button></div>
+          <div id="attList" style="margin-top:6px"></div></div>
+        <div><label>توضیحات</label><textarea id="fDesc"></textarea></div>
+        <div id="taskHistory"></div>
+      </div>
+    </div>
+    <div class="modal-f">
+      <button class="btn" data-action="saveTask">ذخیره</button>
+      <button class="btn danger" data-action="delTask" id="delTaskBtn" style="display:none">حذف</button>
+      <button class="btn ghost" data-action="closeTask">انصراف</button>
+    </div>
+  </div>
+</div>
+
+<!-- Contact Modal -->
+<div class="modal-bg" id="contactModal">
+  <div class="modal">
+    <div class="modal-h"><h2 id="contactModalTitle">مخاطب جدید</h2><button class="x" data-action="closeContact">×</button></div>
+    <div class="modal-b">
+      <div class="fg">
+        <div><label>نام *</label><input id="cName"></div>
+        <div><label>شماره ۱ *</label><input id="cPhone1" type="tel" placeholder="۰۹۱۲…"></div>
+        <div><label>شماره ۲</label><input id="cPhone2" type="tel"></div>
+        <div><label>شماره ۳</label><input id="cPhone3" type="tel"></div>
+        <div><label>یادداشت</label><textarea id="cNote"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-f">
+      <button class="btn" data-action="saveContact">ذخیره</button>
+      <button class="btn danger" data-action="delContact" id="delContactBtn" style="display:none">حذف</button>
+      <button class="btn ghost" data-action="closeContact">انصراف</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="stakeModal">
+  <div class="modal">
+    <div class="modal-h"><h2 id="stakeTitle">ثبت ذی‌نفع جدید</h2><button class="x" data-action="stClose">×</button></div>
+    <div class="modal-b">
+      <div class="fg">
+        <div><label>نام و نام خانوادگی *</label><input id="sName"></div>
+        <div><label>تلفن (اختیاری)</label><input id="sPhone" type="tel" dir="ltr" style="text-align:left"></div>
+        <div><label>شماره کارت ۱</label><input id="sCard1" inputmode="numeric" dir="ltr" style="text-align:left"></div>
+        <div><label>شماره کارت ۲</label><input id="sCard2" inputmode="numeric" dir="ltr" style="text-align:left"></div>
+        <div><label>شماره حساب ۱</label><input id="sAcc1" inputmode="numeric" dir="ltr" style="text-align:left"></div>
+        <div><label>شماره حساب ۲</label><input id="sAcc2" inputmode="numeric" dir="ltr" style="text-align:left"></div>
+        <div><label>شماره شبا ۱</label><input id="sSh1" dir="ltr" placeholder="IR…" style="text-align:left"></div>
+        <div><label>شماره شبا ۲</label><input id="sSh2" dir="ltr" placeholder="IR…" style="text-align:left"></div>
+        <div><label>یادداشت</label><textarea id="sNote"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-f">
+      <button class="btn" data-action="stSave">ذخیره</button>
+      <button class="btn ghost" data-action="stClose">انصراف</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="vaultModal">
+  <div class="modal">
+    <div class="modal-h"><h2 id="vTitle">رمز بخش بانکی</h2><button class="x" data-action="vClose">×</button></div>
+    <div class="modal-b"><div class="fg">
+      <div><label>رمز عبور (حداقل ۸ نویسه)</label><input id="vPass" type="password" dir="ltr" style="text-align:left"></div>
+      <div id="vPass2Wrap"><label>تکرار رمز عبور</label><input id="vPass2" type="password" dir="ltr" style="text-align:left"></div>
+      <div class="muted" id="vHint"></div><div class="err" id="vErr"></div>
+    </div></div>
+    <div class="modal-f"><button class="btn" data-action="vOk">تأیید</button><button class="btn ghost" data-action="vClose">انصراف</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script>
+const KEY='personal_dash_v3';
+const CATS=['داخلی','خودرو','مدیرعامل','پشتیبانی','حراست','IT','مالی','شعبه','خارجی','پیمانکار','سایر','خدمات'];
+const STATUSES=['جدید','در حال انجام','پیگیری','خاتمه یافته'];
+const PRIS=['لحظه ای','فوری','زیاد','متوسط','عادی'];
+const PRI_RANK={'لحظه ای':5,'فوری':4,'زیاد':3,'متوسط':2,'عادی':1};
+const ST_MAP={'جدید':'جدید','باز':'در حال انجام','در حال انجام':'در حال انجام','در انتظار':'پیگیری','پیگیری':'پیگیری','تکمیل\u200cشده':'خاتمه یافته','خاتمه یافته':'خاتمه یافته'};
+const PRI_MAP={'کم':'عادی','عادی':'عادی','متوسط':'متوسط','بالا':'زیاد','زیاد':'زیاد','فوری':'فوری','لحظه ای':'لحظه ای'};
+function migrate(){
+  // مرحله ۱ نسخه ۱۶: پشتیبان خودکار از داده‌های قبل از مهاجرت (فقط یک بار)
+  if(data && data.schemaVersion!==16 && !localStorage.getItem('dash_backup_pre_v16')){
+    try{ localStorage.setItem('dash_backup_pre_v16',JSON.stringify(data)); }catch(e){}
+  }
+  if(!Array.isArray(data.tasks)) data.tasks=[];
+  data.tasks.forEach(t=>{
+    t.status=ST_MAP[t.status]||'جدید';
+    t.priority=PRI_MAP[t.priority]||'عادی';
+    if(!CATS.includes(t.cat1)) t.cat1='سایر';
+    if(!CATS.includes(t.cat2) || t.cat2===t.cat1) t.cat2='';
+    t.progress=+t.progress||0;
+    // ساختار نسخه ۱۶: فیلدهای جدید با مقدار پیش‌فرض، بدون تغییر فیلدهای قبلی
+    if(!Array.isArray(t.subtasks)) t.subtasks=[];
+    if(!Array.isArray(t.attachments)) t.attachments=[];
+    if(!Array.isArray(t.history)) t.history=[];
+  });
+  if(!Array.isArray(data.archive)) data.archive=[];
+  if(!Array.isArray(data.trash)) data.trash=[];
+  if(!Array.isArray(data.templates)) data.templates=[];
+  if(!Array.isArray(data.personal)) data.personal=[];
+  if(!Array.isArray(data.notes)) data.notes=[];
+  if(!Array.isArray(data.focus)) data.focus=[];
+  data.schemaVersion=16;
+  if(!data.contacts) data.contacts=[];
+  if(!data.settings) data.settings={name:'کاربر',prices:{}};
+  // v14: ذی‌نفعان؛ نسخه‌های قبلی فاقد این بخش هستند
+  if(!Array.isArray(data.stakeholders)) data.stakeholders=[];
+  data.stakeholders.forEach(s=>{
+    s.id=s.id||uid(); s.name=s.name||''; s.phone=s.phone||''; s.note=s.note||'';
+    ['cards','accounts','shebas'].forEach(k=>{const a=Array.isArray(s[k])?s[k]:[]; s[k]=[a[0]||'',a[1]||''];});
+  });
+}
+function taskCats(t){
+  const a=[CATS.includes(t.cat1)?t.cat1:'سایر'];
+  if(t.cat2 && CATS.includes(t.cat2) && t.cat2!==a[0]) a.push(t.cat2);
+  return a;
+}
+const byPriority=(a,b)=>((PRI_RANK[b.priority]||1)-(PRI_RANK[a.priority]||1))||((b.updatedAt||'').localeCompare(a.updatedAt||''));
+function todayKey(d){return (d||new Date()).toLocaleDateString('en-CA',{timeZone:TZ})}
+// «جدید» فقط در روز ایجاد می‌ماند؛ از روز بعد خودکار «در حال انجام» می‌شود
+function applyAutoStatus(){
+  const today=todayKey(); let ch=false;
+  data.tasks.forEach(t=>{
+    if(t.status==='جدید' && t.createdAt && todayKey(new Date(t.createdAt))<today){
+      t.history=t.history||[];
+      t.history.push({at:nowISO(),by:'سیستم',text:'وضعیت خودکار: «جدید» به «در حال انجام»'});
+      t.status='در حال انجام'; ch=true;
+    }
+  });
+  return ch;
+}
+const TZ='Asia/Tehran';
+let page='dash', data={tasks:[],contacts:[],settings:{name:'کاربر',prices:{}}}, editTaskId=null, editContactId=null;
+let calY,calM,calSel=null, cStatus, cRecent;
+
+/* Jalali helpers */
+function div(a,b){return~~(a/b)} function mod(a,b){return a-~~(a/b)*b}
+/* تبدیل تاریخ میلادی ⇄ شمسی: با تقویم رسمی مرورگر (Intl) و جست‌وجوی تأییدشده برای معکوس */
+const JALALI_FMT=new Intl.DateTimeFormat('en-u-ca-persian-nu-latn',{year:'numeric',month:'numeric',day:'numeric',timeZone:'UTC'});
+function g2j(gy,gm,gd){
+  const parts=JALALI_FMT.formatToParts(new Date(Date.UTC(gy,gm-1,gd,12)));
+  const get=t=>+parts.find(x=>x.type===t).value;
+  return {jy:get('year'),jm:get('month'),jd:get('day')};
+}
+function j2g(jy,jm,jd){
+  const offset=(jm<=6)?(jm-1)*31:186+(jm-7)*30;
+  const base=Date.UTC(jy+621,2,21)+(offset+jd-1)*864e5;   // تقریب اولیه
+  for(let k=-5;k<=5;k++){
+    const d=new Date(base+k*864e5);
+    const j=g2j(d.getUTCFullYear(),d.getUTCMonth()+1,d.getUTCDate());
+    if(j.jy===jy&&j.jm===jm&&j.jd===jd) return {gy:d.getUTCFullYear(),gm:d.getUTCMonth()+1,gd:d.getUTCDate()};
+  }
+  throw new Error('تاریخ شمسی نامعتبر: '+jy+'/'+jm+'/'+jd);
+}
+function toJalaliStr(iso){
+  if(!iso)return'—';
+  try{
+    const d=new Date(iso);
+    const j=g2j(d.getFullYear(),d.getMonth()+1,d.getDate());
+    const time=d.toLocaleTimeString('fa-IR',{timeZone:TZ,hour:'2-digit',minute:'2-digit'});
+    const hasTime=iso.includes('T')&&!iso.endsWith('T00:00:00.000Z')&&d.getHours()+d.getMinutes()>0;
+    const ds=fa(j.jy)+'/'+String(j.jm).padStart(2,'0').replace(/\d/g,x=>'۰۱۲۳۴۵۶۷۸۹'[x])+'/'+String(j.jd).padStart(2,'0').replace(/\d/g,x=>'۰۱۲۳۴۵۶۷۸۹'[x]);
+    return hasTime?ds+' · '+time:ds;
+  }catch{return iso}
+}
+function fromJalaliStr(s,timeStr){
+  if(!s)return'';
+  s=s.replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[^0-9/]/g,'');
+  const p=s.split('/'); if(p.length<3)return'';
+  const g=j2g(+p[0],+p[1],+p[2]);
+  let h=0,m=0;
+  if(timeStr){const t=timeStr.split(':');h=+t[0]||0;m=+t[1]||0}
+  const d=new Date(g.gy,g.gm-1,g.gd,h,m);
+  return d.toISOString();
+}
+
+const ICON_RULES=[
+ [/تماس|تلفن|زنگ/,"M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"],
+ [/ایمیل|میل|پیام|ارسال|نامه/,"M3 6h18v12H3z M3 7l9 6 9-6"],
+ [/گزارش|فایل|سند|قرارداد|مستند/,"M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6"],
+ [/پرداخت|فاکتور|پول|مالی|هزینه|واریز|حساب/,"M12 3v18 M16 7.5c0-1.5-2-2.5-4-2.5s-4 1-4 2.5 2 2.5 4 3 4 1.5 4 3-2 2.5-4 2.5-4-1-4-2.5"],
+ [/کاربر|مشتری|شخص|همکار/,"M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21c0-4 4-6 8-6s8 2 8 6"],
+ [/تیکت|درخواست|شکایت|مشکل|خطا|پشتیبانی/,"M3 8h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z M14 8v10"],
+ [/جلسه|قرار|نشست|رویداد|ملاقات/,"M4 6h16v14H4z M4 10h16 M8 3v4 M16 3v4"],
+ [/انجام|تکمیل|بررسی|تایید|تأیید|چک/,"M4 12l5 5L20 6"],
+ [/مهلت|سررسید|ساعت|یادآوری|زمان/,"M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M12 7v5l3 2"],
+ [/آمار|تحلیل|نمودار|داده|فروش/,"M4 20h16 M7 16v-5 M12 16V7 M17 16v-9"],
+ [/تعمیر|راه‌اندازی|نصب|تنظیم|فنی|سرور/,"M14 6a4 4 0 0 0 5 5l-8 8a2.8 2.8 0 0 1-4-4l8-8a4 4 0 0 0-1-1z"],
+ [/دفتر|خانه|اداری|انبار/,"M3 11l9-7 9 7v9H3z M9 20v-6h6v6"],
+ [/آموزش|مطالعه|کتاب|دوره|یادگیری/,"M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z M4 5v16"],
+ [/مهم|فوری|اولویت|ضروری/,"M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"],
+ [/خرید|کالا|محصول|سفارش/,"M4 7h16l-1.5 12h-13z M9 7a3 3 0 0 1 6 0"],
+ [/طراحی|گرافیک|لوگو|ui|ux/,"M12 19l7-7 3 3-7 7-3-3z M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"],
+ [/برنامه|کد|توسعه|نرم‌افزار|اپ|وب/,"M16 18l6-6-6-6 M8 6l-6 6 6 6"],
+ [/امنیت|رمز|دسترسی|مجوز/,"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"],
+ [/پشتیبان|بکاپ|بازیابی/,"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M17 8l-5-5-5 5 M12 3v12"],
+ [/چاپ|پرینت|اسکن/,"M6 9V2h12v7 M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2 M6 14h12v8H6z"],
+ [/سفر|ماموریت|پرواز|هتل/,"M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"],
+ [/غذا|ناهار|شام|رستوران/,"M18 8h1a4 4 0 0 1 0 8h-1 M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"],
+ [/سلامت|پزشک|بیمارستان|دارو/,"M22 12h-4l-3 9L9 3l-3 9H2"],
+ [/نقشه|موقعیت|آدرس/,"M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"],
+ [/اینترنت|شبکه|وای‌فای|اتصال/,"M5 12.55a11 11 0 0 1 14.08 0 M1.42 9a16 16 0 0 1 21.16 0 M8.53 16.11a6 6 0 0 1 6.95 0 M12 20h.01"],
+ [/خودرو|ماشین|تاکسی/,"M5 17h14v2a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-2z M5 17l1.5-4.5h11L19 17"],
+ [/حقوق|دستمزد|پاداش/,"M12 1v22 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"],
+ [/بازاریابی|تبلیغ|کمپین/,"M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0"],
+ [/منابع انسانی|استخدام|مصاحبه/,"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"],
+ [/پشتیبانی|کمک|راهنما/,"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"],
+ [/بروزرسانی|آپدیت|نسخه/,"M23 4v6h-6 M1 20v-6h6 M3.51 9a9 9 0 0 1 14.85-3.36L23 10 M1 14l4.64 4.36A9 9 0 0 0 20.49 15"],
+ [/تست|آزمون|qa/,"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M9 15l2 2 4-4"],
+ [/پیک|ارسال|تحویل/,"M1 3h15v13H1z M16 8h4l3 3v5h-7V8z"],
+ [/یادداشت|نوت/,"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8"]
+];
+const ICON_DEFAULT="M12 3l8 4.5v9L12 21l-8-4.5v-9z";
+function taskIcon(title){
+  const r=ICON_RULES.find(([re])=>re.test(title||""));
+  return `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${r?r[1]:ICON_DEFAULT}"/></svg>`;
+}
+
+function fa(n){return new Intl.NumberFormat('fa-IR').format(n)}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
+function uid(){return 't'+Date.now()+Math.random().toString(36).slice(2,6)}
+function nowISO(){return new Date().toISOString()}
+const SEED={"tasks":[],"contacts":[],"settings":{"name":"کاربر","prices":{}}};
+function normalizeImport(raw){
+  if(!raw) return null;
+  // Original backup format
+  if(Array.isArray(raw.tasks) && Array.isArray(raw.history)){
+    const histBy={};
+    (raw.history||[]).forEach(h=>{const tid=h.taskId; if(!histBy[tid])histBy[tid]=[]; histBy[tid].push({at:h.at,by:'کاربر',text:h.text||''});});
+    const sm={'جدید':'جدید','باز':'جدید','پیگیری':'پیگیری','خاتمه یافته':'خاتمه یافته'};
+    const pm={'عادی':'عادی','زیاد':'زیاد','کم':'کم','متوسط':'عادی','بالا':'زیاد','پایین':'کم'};
+    return {
+      tasks:(raw.tasks||[]).map(t=>({
+        id:t.id, title:t.title||'', status:sm[t.status]||t.status||'جدید',
+        priority:pm[t.priority]||t.priority||'عادی', progress:t.progress||0,
+        desc:t.note||t.desc||'', due:t.due||'', reminder:t.reminder||'', notified:t.notified||'',
+        createdAt:t.createdAt||'', updatedAt:t.updatedAt||t.createdAt||'',
+        history:histBy[t.id]||[]
+      })),
+      contacts:raw.contacts||[],
+      settings:raw.settings||{name:'کاربر',prices:{}}
+    };
+  }
+  if(Array.isArray(raw.tasks)) return raw;
+  return null;
+}
+function load(){
+  try{
+    const r=localStorage.getItem(KEY);
+    if(r){ data=JSON.parse(r); }
+    else { data=JSON.parse(JSON.stringify(SEED)); save(); }
+  }catch{ data=JSON.parse(JSON.stringify(SEED)); }
+  if(!data.tasks)data.tasks=[];
+  if(!data.contacts)data.contacts=[];
+  if(!data.settings)data.settings={name:'کاربر',prices:{}};
+  migrate();
+}
+function save(){trackChanges(); localStorage.setItem(KEY,JSON.stringify(data))
+  try{pushCloud()}catch(e){}
+}
+
+function updateClock(){
+  const p=new Intl.DateTimeFormat("en-GB",{timeZone:TZ,hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date());
+  const hh=p.find(x=>x.type==="hour").value, mm=p.find(x=>x.type==="minute").value;
+  document.getElementById('clockBox').textContent=hh+':'+mm;
+}
+setInterval(updateClock,1000);updateClock();
+
+const HADITHS=[
+  {t:'کار امروز را به فردا میفکن.',w:'امام علی (ع)',s:'نهج‌البلاغه'},
+  {t:'بهترین مردم کسی است که به مردم سود رساند.',w:'پیامبر اکرم (ص)',s:'نهج‌الفصاحه'},
+  {t:'صبر کلید گشایش است.',w:'امام علی (ع)',s:'غررالحکم'},
+  {t:'هر که حساب خود را برسد، حسابش آسان شود.',w:'پیامبر اکرم (ص)',s:'بحارالانوار'},
+  {t:'دانش را بجویید حتی اگر در چین باشد.',w:'پیامبر اکرم (ص)',s:'کنزالعمال'},
+  {t:'مؤمن آینه‌ی مؤمن است.',w:'پیامبر اکرم (ص)',s:'سنن ابی‌داود'},
+  {t:'دست‌دهنده بالاتر از دست‌گیرنده است.',w:'پیامبر اکرم (ص)',s:'صحیح بخاری'},
+  {t:'هر که تقوا پیشه کند، خدا برایش راه خروج قرار دهد.',w:'قرآن کریم',s:'طلاق / ۲'}
+];
+const JEVENTS=[
+  {m:'فروردین',d:1,t:'آغاز سال نو شمسی / نوروز'},{m:'فروردین',d:12,t:'روز جمهوری اسلامی'},{m:'فروردین',d:13,t:'روز طبیعت'},
+  {m:'خرداد',d:14,t:'رحلت امام خمینی (ره)'},{m:'خرداد',d:15,t:'قیام ۱۵ خرداد'},
+  {m:'تیر',d:7,t:'شهادت دکتر بهشتی و ۷۲ تن'},{m:'شهریور',d:8,t:'روز مبارزه با تروریسم'},
+  {m:'مهر',d:13,t:'روز نیروی انتظامی'},{m:'آبان',d:13,t:'روز دانش‌آموز'},{m:'آذر',d:16,t:'روز دانشجو'},
+  {m:'دی',d:13,t:'روز مقاومت'},{m:'بهمن',d:22,t:'پیروزی انقلاب اسلامی'},{m:'اسفند',d:29,t:'روز ملی شدن صنعت نفت'}
+];
+const MONTHS=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+function jParts(iso){
+  const d=new Date(iso);
+  const f=new Intl.DateTimeFormat('en-u-ca-persian',{timeZone:TZ,year:'numeric',month:'numeric',day:'numeric'});
+  const p=f.formatToParts(d);
+  return {y:+p.find(x=>x.type==='year').value, m:+p.find(x=>x.type==='month').value, d:+p.find(x=>x.type==='day').value};
+}
+
+let EVENTS_TODAY=[];
+let EVENTS_ERR=null;
+
+/* —— همگام‌سازی ابری Firebase —— */
+let cloudReady=false, cloudRef=null, applyingRemote=false, saveTimer=null;
+const CLOUD_KEY='dash_fb_cfg';
+
+function getFbCfg(){
+  try{return JSON.parse(localStorage.getItem(CLOUD_KEY)||'null')}catch(e){return null}
+}
+function setFbCfg(cfg){
+  if(cfg) localStorage.setItem(CLOUD_KEY, JSON.stringify(cfg));
+  else localStorage.removeItem(CLOUD_KEY);
+}
+
+let connRef=null, connFn=null, cloudConnected=false;
+
+function stopCloud(){
+  try{ if(cloudRef) cloudRef.off(); }catch(e){}
+  try{ if(connRef&&connFn) connRef.off('value',connFn); }catch(e){}
+  cloudRef=null; connRef=null; connFn=null; cloudReady=false; cloudConnected=false;
+}
+
+function initCloud(){
+  stopCloud();
+  const cfg=getFbCfg();
+  if(!cfg || !cfg.apiKey || !cfg.databaseURL){ updateCloudBadge(); return; }
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(cfg);
+    const db=firebase.database();
+    cloudRef=db.ref(cfg.path||'dashboard/shared');
+    connRef=db.ref('.info/connected');
+    connFn=snap=>{
+      cloudConnected=snap.val()===true; updateCloudBadge(); renderCloudStatus();
+      if(cloudConnected && !cloudInFlight && (cloudPending || !cloudBootPushed)) sendCloud();   // تغییرات آفلاین و اولین ارسال
+    };
+    connRef.on('value', connFn);
+    cloudReady=true;
+    cloudRef.on('value', snap=>{
+      const remote=snap.val();
+      if(remote){
+        if(saveTimer) return;
+        applyingRemote=true;
+        detectConflicts(data,remote);
+      const m=mergeStates(data,remote,'B');
+        data={tasks:m.tasks,contacts:m.contacts,stakeholders:m.stakeholders,archive:m.archive,trash:m.trash,templates:m.templates,personal:m.personal,notes:m.notes,focus:m.focus,deleted:m.deleted,vault:m.vault,settings:m.settings};
+        migrate();
+        setSnapshot();
+        localStorage.setItem(KEY, JSON.stringify(data));
+        try{ render() }catch(e){ console.error(e) }
+        if(vaultKey) refreshBank().then(()=>renderStake()).catch(()=>{});
+        applyingRemote=false;
+        if((cloudPending || !cloudBootPushed) && !saveTimer && !cloudInFlight && cloudConnected) sendCloud();
+      }else{
+        // ابر خالی است: داده‌های این دستگاه را بالا می‌بریم
+        pushCloud(true);
+      }
+      updateCloudBadge();
+    }, err=>{
+      console.error(err);
+      cloudReady=false;
+      toast('دسترسی به ابر رد شد: '+(err.message||err));
+      updateCloudBadge(false);
+    });
+  }catch(e){
+    cloudReady=false;
+    console.error(e);
+    toast('خطا در اتصال ابری: '+(e.message||e));
+    updateCloudBadge(false);
+  }
+}
+
+function pushCloud(now){
+  if(!cloudReady || !cloudRef || applyingRemote) return;
+  setCloudPending(true);
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{ saveTimer=null; sendCloud() }, now?0:400);
+}
+function sendCloud(){
+  if(!cloudReady || !cloudRef) return Promise.resolve();
+  if(cloudInFlight){ cloudResend=true; return Promise.resolve() }   // جلوگیری از ارسال‌های تودرتو و حلقه بی‌پایان
+  cloudInFlight=true;
+  const payload=JSON.parse(JSON.stringify({
+    tasks: data.tasks||[], contacts: data.contacts||[], stakeholders: data.stakeholders||[],
+    vault: data.vault||null, deleted: data.deleted||{},
+    archive: data.archive||[], trash: data.trash||[], templates: data.templates||[], personal: data.personal||[], notes: data.notes||[], focus: data.focus||[],
+    settings: data.settings||{}, updatedAt: new Date().toISOString()
+  }));
+  cloudBootPushed=true;
+  return cloudRef.transaction(r=>{
+    const remote=r||{};
+    detectConflicts(payload,remote);            // تعارض واقعی را ثبت کن، نه اینکه بی‌صدا جایگزین شود
+    return mergeStates(remote,payload,'B');
+  }).then(()=>{
+    cloudInFlight=false;
+    cloudRetryN=0; cloudLastError='';
+    if(!saveTimer && !cloudResend){ localStorage.setItem('dash_last_sync',nowISO()); setCloudPending(false) }
+    updateCloudBadge(true); renderCloudStatus(); renderConflicts();
+    if(cloudResend){ cloudResend=false; sendCloud() }
+  }).catch(e=>{
+    cloudInFlight=false;
+    cloudLastError=String((e&&e.message)||e);
+    console.error('cloud push',e);
+    scheduleCloudRetry(); updateCloudBadge(false); renderCloudStatus();
+  });
+}
+function scheduleCloudRetry(){
+  clearTimeout(cloudRetryTimer);
+  const wait=Math.min(60000, 2000*Math.pow(2,cloudRetryN)); cloudRetryN++;
+  cloudRetryTimer=setTimeout(sendCloud,wait);
+}
+
+let cloudPending=!!localStorage.getItem('dash_cloud_pending');
+let cloudRetryTimer=null, cloudRetryN=0, cloudLastError='', cloudBootPushed=false, cloudInFlight=false, cloudResend=false;
+function setCloudPending(on){
+  cloudPending=on;
+  if(on){ if(!localStorage.getItem('dash_cloud_pending')) localStorage.setItem('dash_cloud_pending',nowISO()) }
+  else localStorage.removeItem('dash_cloud_pending');
+}
+function updateCloudBadge(ok){
+  const el=document.getElementById('cloudBadge');
+  if(!el) return;
+  if(!getFbCfg()){ el.textContent='☁ فقط این دستگاه'; el.style.color='#94a3b8'; return; }
+  if(!cloudReady || ok===false){ el.textContent='☁ قطع'; el.style.color='#fbbf24'; return; }
+  el.textContent = cloudConnected ? '☁ آنلاین · مشترک' : '☁ آفلاین · منتظر اتصال';
+  el.style.color = cloudConnected ? '#2dd4bf' : '#fbbf24';
+}
+
+const DEFAULT_EVENTS=[{"jDate": "1405/01/01", "text": "عید نوروز", "isHoliday": false}, {"jDate": "1405/01/02", "text": "عید نوروز؛ آغاز عملیات فتح المبین (1361)؛ تهاجم رژیم ستم شاهی به مدرسه فیضیه قم (1342)", "isHoliday": false}, {"jDate": "1405/01/03", "text": "عید نوروز؛ روز جهانی هواشناسی", "isHoliday": false}, {"jDate": "1405/01/04", "text": "عید نوروز", "isHoliday": false}, {"jDate": "1405/01/06", "text": "روز امید؛ روز شادباش نویسی", "isHoliday": false}, {"jDate": "1405/01/12", "text": "روز جمهوری اسلامی ایران", "isHoliday": false}, {"jDate": "1405/01/13", "text": "روز طبیعت", "isHoliday": false}, {"jDate": "1405/01/18", "text": "روز سلامتی (روز جهانی بهداشت)", "isHoliday": false}, {"jDate": "1405/01/19", "text": "شهادت آیت الله سید محمد باقر صدر و خواهر ایشان بنت الهدی توسط رژیم بعث عراق (1359)", "isHoliday": false}, {"jDate": "1405/01/20", "text": "روز ملی فناوری هسته ای", "isHoliday": false}, {"jDate": "1405/01/21", "text": "شهادت امیر سپهبد علی صیاد شیرازی", "isHoliday": false}, {"jDate": "1405/01/25", "text": "روز بزرگداشت عطار نیشابوری", "isHoliday": false}, {"jDate": "1405/01/29", "text": "روز ارتش جمهوری اسلامی ایران", "isHoliday": false}, {"jDate": "1405/01/30", "text": "روز وقف", "isHoliday": false}, {"jDate": "1405/02/01", "text": "روز بزرگداشت سعدی", "isHoliday": false}, {"jDate": "1405/02/02", "text": "تاسیس سپاه پاسداران انقلاب اسلامی (1358)؛ سالروز انقلاب فرهنگی (1359)؛ روز زمین پاک", "isHoliday": false}, {"jDate": "1405/02/03", "text": "روز بزرگداشت شیخ بهایی", "isHoliday": false}, {"jDate": "1405/02/05", "text": "شکست حمله نظامی آمریکا به ایران در طبس (1359)", "isHoliday": false}, {"jDate": "1405/02/09", "text": "روز شوراها؛ ولادت حضرت معصومه (س)", "isHoliday": false}, {"jDate": "1405/02/10", "text": "روز ملی خلیج فارس؛ آغاز عملیات بیت المقدس (1361)", "isHoliday": false}, {"jDate": "1405/02/11", "text": "روز جهانی کارگر", "isHoliday": false}, {"jDate": "1405/02/12", "text": "شهادت استاد مطهری (1358)؛ روز معلم", "isHoliday": false}, {"jDate": "1405/02/15", "text": "روز بزرگداشت شیخ صدوق؛ روز جهانی ماما", "isHoliday": false}, {"jDate": "1405/02/18", "text": "روز جهانی صلیب سرخ", "isHoliday": false}, {"jDate": "1405/02/19", "text": "روز اسناد ملی؛ ولادت امام رضا", "isHoliday": false}, {"jDate": "1405/02/24", "text": "لغو امتیاز تنباکو به فتوای آیت الله میرزای شیرازی (1270)", "isHoliday": false}, {"jDate": "1405/02/25", "text": "روز بزرگداشت فردوسی", "isHoliday": false}, {"jDate": "1405/02/26", "text": "روز جهانی خانواده", "isHoliday": false}, {"jDate": "1405/02/28", "text": "روز بزرگداشت حکیم عمر خیام؛ روز جهانی ارتباطات", "isHoliday": false}, {"jDate": "1405/02/29", "text": "روز جهانی موزه و میراث فرهنگی", "isHoliday": false}, {"jDate": "1405/03/01", "text": "روز بهره وری؛ روز بزرگداشت ملاصدرا (صدرالمتألهین)؛ روز جهانی توسعه فرهنگی", "isHoliday": false}, {"jDate": "1405/03/03", "text": "فتح خرمشهر در عملیات بیت المقدس (1361)؛ روز مقاومت، ایثار و پیروزی", "isHoliday": false}, {"jDate": "1405/03/04", "text": "روز دزفول (روز مقاومت و پایداری)", "isHoliday": false}, {"jDate": "1405/03/05", "text": "روز نسیم مهر (حمایت از خانواده زندانیان)", "isHoliday": false}, {"jDate": "1405/03/07", "text": "افتتاح اولین دوره مجلس شورای اسلامی (1359 هـ ش)", "isHoliday": false}, {"jDate": "1405/03/14", "text": "رحلت حضرت امام خمینی (ره)، رهبر کبیر انقلاب و بنیانگذار جمهوری اسلامی ایران (1368)؛ انتخاب حضرت آیت الله خامنه ای به رهبری (1368)", "isHoliday": false}, {"jDate": "1405/03/15", "text": "قیام خونین 15 خرداد (1342)؛ روز جهانی محیط زیست؛ روز عرفه", "isHoliday": false}, {"jDate": "1405/03/20", "text": "شهادت آیت الله سعیدی توسط رژیم ستم شاهی پهلوی (1349)؛ روز جهانی صنایع دستی", "isHoliday": false}, {"jDate": "1405/03/21", "text": "روز جهانی صنایع دستی", "isHoliday": false}, {"jDate": "1405/03/26", "text": "شهادت سربازان دلیر اسلام: بخارائی، امانی، صفار هرندی و نیک نژاد (1344)", "isHoliday": false}, {"jDate": "1405/03/28", "text": "روز جهانی بیابان زدایی", "isHoliday": false}, {"jDate": "1405/03/29", "text": "درگذشت دکتر علی شریعتی (1356)", "isHoliday": false}, {"jDate": "1405/03/30", "text": "شهادت زائران حرم رضوی", "isHoliday": false}, {"jDate": "1405/03/31", "text": "شهادت دکتر مصطفی چمران (1360)؛ روز بسیج استادان", "isHoliday": false}, {"jDate": "1405/04/01", "text": "سالروز صدور فرمان حضرت امام خمینی (ره) مبنی بر تاسیس سازمان تبلیغات اسلامی (1360)؛ روز اصناف", "isHoliday": false}, {"jDate": "1405/04/05", "text": "روز جهانی مبارزه با مواد مخدر", "isHoliday": false}, {"jDate": "1405/04/06", "text": "روز بزرگداشت محتشم کاشانی", "isHoliday": false}, {"jDate": "1405/04/07", "text": "شهادت آیت الله دکتر بهشتی و 72 تن از یاران امام خمینی (ره) با انفجار بمب به دست منافقین در دفتر مرکزی حزب جمهوری اسلامی (1360)؛ روز قوه قضاییه؛ روز امر به معروف و نهی از منکر؛ بمباران شیمیایی شهر سردشت", "isHoliday": false}, {"jDate": "1405/04/08", "text": "روز مبارزه با سلاح های شیمیایی و میکروبی", "isHoliday": false}, {"jDate": "1405/04/10", "text": "روز صنعت و معدن؛ بزرگداشت صائب تبریزی", "isHoliday": false}, {"jDate": "1405/04/11", "text": "شهادت آیت الله صدوقی، چهارمین شهید محراب به دست منافقین (1361)", "isHoliday": false}, {"jDate": "1405/04/12", "text": "روز افشای حقوق بشر امریکایی؛ سقوط هواپیمای مسافربری جمهوری اسلامی ایران توسط ناوگان آمریکای جنایتکار (1367)", "isHoliday": false}, {"jDate": "1405/04/13", "text": "روز مبارزه با بیماری های قابل انتقال بین انسان و حیوان", "isHoliday": false}, {"jDate": "1405/04/14", "text": "روز قلم؛ روز شهرداری و دهیاری", "isHoliday": false}, {"jDate": "1405/04/16", "text": "روز مالیات", "isHoliday": false}, {"jDate": "1405/04/17", "text": "شهادت امام زین العابدین", "isHoliday": false}, {"jDate": "1405/04/18", "text": "روز ادبیات کودکان و نوجوانان", "isHoliday": false}, {"jDate": "1405/04/21", "text": "روز عفاف و حجاب", "isHoliday": false}, {"jDate": "1405/04/22", "text": "بزرگداشت خوارزمی", "isHoliday": false}, {"jDate": "1405/04/23", "text": "گشایش نخستین مجلس خبرگان رهبری (1362 هـ ش)", "isHoliday": false}, {"jDate": "1405/04/25", "text": "روز بهزیستی و تامین اجتماعی", "isHoliday": false}, {"jDate": "1405/04/26", "text": "تاسیس شورای نگهبان", "isHoliday": false}, {"jDate": "1405/04/27", "text": "اعلام پذیرش قطعنامه 598 شورای امنیت از سوی ایران (1367)", "isHoliday": false}, {"jDate": "1405/04/30", "text": "روز خلبان", "isHoliday": false}, {"jDate": "1405/05/05", "text": "سالروز عملیات غرور آفرین مرصاد (1367)؛ اولین نماز جمعه در سال 1358", "isHoliday": false}, {"jDate": "1405/05/06", "text": "روز ترویج آموزش های فنی و حرفه ای؛ ولادت امام محمد باقر", "isHoliday": false}, {"jDate": "1405/05/08", "text": "روز بزرگداشت شیخ شهاب الدین سهروردی (شیخ اشراق)", "isHoliday": false}, {"jDate": "1405/05/09", "text": "روز اهدای خون", "isHoliday": false}, {"jDate": "1405/05/10", "text": "بزرگداشت سلمان فارسی", "isHoliday": false}, {"jDate": "1405/05/14", "text": "صدور فرمان مشروطیت (1285)", "isHoliday": false}, {"jDate": "1405/05/15", "text": "شهادت امیر سرلشکر خلبان عباس بابایی؛ انفجار بمب اتمی آمریکا در هیروشیما", "isHoliday": false}, {"jDate": "1405/05/16", "text": "تشکیل جهاد دانشگاهی (1359)", "isHoliday": false}, {"jDate": "1405/05/17", "text": "روز خبرنگار", "isHoliday": false}, {"jDate": "1405/05/18", "text": "بزرگداشت شهدای مدافع حرم", "isHoliday": false}, {"jDate": "1405/05/23", "text": "روز مقاومت اسلامی", "isHoliday": false}, {"jDate": "1405/05/26", "text": "آغاز بازگشت آزادگان به میهن اسلامی (1369)", "isHoliday": false}, {"jDate": "1405/05/28", "text": "کودتای آمریکا برای باز گرداندن شاه (1332)", "isHoliday": false}, {"jDate": "1405/05/29", "text": "اعلام آغاز آتش بس میان ایران و عراق", "isHoliday": false}, {"jDate": "1405/05/30", "text": "روز بزرگداشت علامه مجلسی؛ روز جهانی مسجد", "isHoliday": false}, {"jDate": "1405/06/01", "text": "بزرگداشت ابوعلی سینا (روز پزشک)", "isHoliday": false}, {"jDate": "1405/06/02", "text": "آغاز هفته دولت", "isHoliday": false}, {"jDate": "1405/06/04", "text": "روز کارمند", "isHoliday": false}, {"jDate": "1405/06/05", "text": "روز داروسازی؛ روز بزرگداشت محمد بن زکریای رازی", "isHoliday": false}, {"jDate": "1405/06/08", "text": "انفجار دفتر نخست وزیری به دست منافقین و شهادت شهیدان رجایی و باهنر (1360)؛ روز مبارزه با تروریسم", "isHoliday": false}, {"jDate": "1405/06/10", "text": "روز بانکداری اسلامی؛ سالروز تصویب قانون عملیات بانکی بدون ربا (1362)؛ روز تشکیل قرارگاه خاتم الانبیا", "isHoliday": false}, {"jDate": "1405/06/11", "text": "روز صنعت چاپ", "isHoliday": false}, {"jDate": "1405/06/12", "text": "روز بهورز", "isHoliday": false}, {"jDate": "1405/06/13", "text": "روز تعاون؛ روز بزرگداشت ابوریحان بیرونی", "isHoliday": false}, {"jDate": "1405/06/14", "text": "شهادت آیت الله قدوسی و سرتیپ وحید دستجردی (1360)؛ آغاز هفته وحدت", "isHoliday": false}, {"jDate": "1405/06/17", "text": "جمعه سیاه؛ قیام 17 شهریور و کشتار جمعی از مردم به دست ماموران ستم شاهی (1357)", "isHoliday": false}, {"jDate": "1405/06/19", "text": "شهادت آیت الله سید محمود طالقانی، اولین امام جمعه تهران (1358)", "isHoliday": false}, {"jDate": "1405/06/20", "text": "شهادت دومین شهید محراب آیت الله مدنی به دست منافقین (1360)", "isHoliday": false}, {"jDate": "1405/06/21", "text": "روز سینما", "isHoliday": false}, {"jDate": "1405/06/27", "text": "روز شعر و ادب فارسی (روز بزرگداشت استاد سید محمدحسین شهریار)", "isHoliday": false}, {"jDate": "1405/06/30", "text": "روز گفتگوی تمدن ها", "isHoliday": false}, {"jDate": "1405/06/31", "text": "آغاز جنگ تحمیلی (1359)؛ آغاز هفته دفاع مقدس", "isHoliday": false}, {"jDate": "1405/07/04", "text": "روز سرباز", "isHoliday": false}, {"jDate": "1405/07/05", "text": "شکست حصر آبادان در عملیات ثامن الائمه (ع) (1360)", "isHoliday": false}, {"jDate": "1405/07/06", "text": "روز جهانی جهانگردی؛ روز گردشگری", "isHoliday": false}, {"jDate": "1405/07/07", "text": "روز آتش نشانی و ایمنی؛ شهادت سرداران اسلام: فلاحی، فکوری، نامجو، کلاهدوز و جهان آرا (1360)", "isHoliday": false}, {"jDate": "1405/07/08", "text": "روز بزرگداشت مولوی؛ روز جهانی دریانوردی", "isHoliday": false}, {"jDate": "1405/07/09", "text": "روز همبستگی و همدردی با کودکان فلسطینی؛ روز جهانی ناشنوایان؛ روز جهانی سالمندان", "isHoliday": false}, {"jDate": "1405/07/10", "text": "روز نخبگان", "isHoliday": false}, {"jDate": "1405/07/13", "text": "هجرت امام خمینی (ره) از عراق به پاریس (1357)؛ روز نیروی انتظامی", "isHoliday": false}, {"jDate": "1405/07/14", "text": "روز دامپزشکی", "isHoliday": false}, {"jDate": "1405/07/15", "text": "روز عملیات طوفان الاقصی؛ روز جهانی حماسه فلسطین", "isHoliday": false}, {"jDate": "1405/07/16", "text": "روز ملی کودک", "isHoliday": false}, {"jDate": "1405/07/17", "text": "روز جهانی پست", "isHoliday": false}, {"jDate": "1405/07/20", "text": "روز بزرگداشت حافظ؛ روز اسکن معلولین و سالمندان؛ روز ملی کاهش اثرات بلایای طبیعی", "isHoliday": false}, {"jDate": "1405/07/22", "text": "روز جهانی استاندارد", "isHoliday": false}, {"jDate": "1405/07/23", "text": "شهادت پنجمین شهید محراب آیت الله اشرفی اصفهانی توسط منافقین (1361)؛ روز جهانی نابینایان (عصای سفید)", "isHoliday": false}, {"jDate": "1405/07/24", "text": "روز پیوند اولیاء و مربیان", "isHoliday": false}, {"jDate": "1405/07/25", "text": "روز نسل کشی کودکان و زنان فلسطین", "isHoliday": false}, {"jDate": "1405/07/26", "text": "روز تربیت بدنی و ورزش", "isHoliday": false}, {"jDate": "1405/07/29", "text": "روز صادرات", "isHoliday": false}, {"jDate": "1405/08/01", "text": "روز آمار و برنامه ریزی", "isHoliday": false}, {"jDate": "1405/08/04", "text": "اعتراض و افشاگری حضرت امام خمینی (ره) علیه پذیرش کاپیتولاسیون (1343)", "isHoliday": false}, {"jDate": "1405/08/08", "text": "شهادت محمد حسین فهمیده (بسیجی 13 ساله)؛ روز نوجوان؛ روز بسیج دانش آموزی", "isHoliday": false}, {"jDate": "1405/08/10", "text": "شهادت آیت الله قاضی طباطبایی، اولین شهید محراب به دست منافقین (1358)", "isHoliday": false}, {"jDate": "1405/08/13", "text": "تبعید امام خمینی (ره) به ترکیه (1343)؛ روز دانش آموز (شهادت دانش آموزان در اعتراض به دخالت های آمریکا در ایران (1357))؛ تسخیر لانه جاسوسی آمریکا به دست دانشجویان پیرو خط امام (1358)؛ روز ملی مبارزه با استکبار جهانی", "isHoliday": false}, {"jDate": "1405/08/19", "text": "روز ملی کیفیت", "isHoliday": false}, {"jDate": "1405/08/24", "text": "روز کتاب و کتابخوانی؛ روز بزرگداشت آیت الله علامه سید محمد حسین طباطبایی (1360)", "isHoliday": false}, {"jDate": "1405/08/29", "text": "روز جهانی کودک", "isHoliday": false}, {"jDate": "1405/08/30", "text": "روز جهانی کودک", "isHoliday": false}, {"jDate": "1405/09/05", "text": "روز بسیج مستضعفین؛ تشکیل بسیج مستضعفین به فرمان امام خمینی (ره) (1358)", "isHoliday": false}, {"jDate": "1405/09/07", "text": "روز نیروی دریایی؛ شهادت شهید هسته ای محسن فخری زاده", "isHoliday": false}, {"jDate": "1405/09/09", "text": "روز بزرگداشت شیخ مفید", "isHoliday": false}, {"jDate": "1405/09/10", "text": "شهادت آیت الله سید حسن مدرس (1316)؛ روز مجلس", "isHoliday": false}, {"jDate": "1405/09/11", "text": "شهادت میرزا کوچک خان جنگلی", "isHoliday": false}, {"jDate": "1405/09/12", "text": "روز تصویب قانون اساسی جمهوری اسلامی ایران (1358)", "isHoliday": false}, {"jDate": "1405/09/13", "text": "روز بیمه؛ روز جهانی معلولین", "isHoliday": false}, {"jDate": "1405/09/16", "text": "روز دانشجو", "isHoliday": false}, {"jDate": "1405/09/18", "text": "معرفی عراق به عنوان مسئول و آغازگر جنگ از سوی سازمان ملل (1370)", "isHoliday": false}, {"jDate": "1405/09/19", "text": "تشکیل شورای عالی انقلاب فرهنگی به فرمان امام خمینی (ره) (1363)", "isHoliday": false}, {"jDate": "1405/09/20", "text": "شهادت آیت الله دستغیب، سومین شهید محراب به دست منافقین (1360)", "isHoliday": false}, {"jDate": "1405/09/25", "text": "روز پژوهش", "isHoliday": false}, {"jDate": "1405/09/26", "text": "روز حمل و نقل", "isHoliday": false}, {"jDate": "1405/09/27", "text": "شهادت آیت الله دکتر محمد مفتح (1358)؛ روز وحدت حوزه و دانشگاه", "isHoliday": false}, {"jDate": "1405/10/04", "text": "میلاد حضرت مسیح (ع)", "isHoliday": false}, {"jDate": "1405/10/07", "text": "شهادت آیت الله حسین غفاری توسط رژیم ستم شاهی پهلوی (1352)؛ سالروز تشکیل نهضت سوادآموزی به فرمان حضرت امام خمینی (ره) (1358)", "isHoliday": false}, {"jDate": "1405/10/09", "text": "روز بصیرت و میثاق امت با ولایت", "isHoliday": false}, {"jDate": "1405/10/12", "text": "آغاز سال جدید میلادی", "isHoliday": false}, {"jDate": "1405/10/13", "text": "روز جهانی مقاومت (سالروز شهادت سردار قاسم سلیمانی)", "isHoliday": false}, {"jDate": "1405/10/14", "text": "روز جهاد کشاورزی", "isHoliday": false}, {"jDate": "1405/10/19", "text": "قیام خونین مردم قم", "isHoliday": false}, {"jDate": "1405/10/20", "text": "شهادت امیر کبیر (1230 برابر با 17 ربیع الاول 1268 هجری قمری)", "isHoliday": false}, {"jDate": "1405/10/22", "text": "تشکیل شورای انقلاب به فرمان حضرت امام خمینی (ره) (1357)", "isHoliday": false}, {"jDate": "1405/10/26", "text": "فرار شاه معدوم (1357)", "isHoliday": false}, {"jDate": "1405/10/27", "text": "شهادت نواب صفوی، طهماسبی، برادران واحدی و ذوالقدر از فدائیان اسلام (1334)", "isHoliday": false}, {"jDate": "1405/10/29", "text": "روز غزه", "isHoliday": false}, {"jDate": "1405/11/12", "text": "بازگشت حضرت امام خمینی (ره) (1357)", "isHoliday": false}, {"jDate": "1405/11/14", "text": "روز فناوری فضایی", "isHoliday": false}, {"jDate": "1405/11/17", "text": "روز خانواده", "isHoliday": false}, {"jDate": "1405/11/19", "text": "روز نیروی هوایی", "isHoliday": false}, {"jDate": "1405/11/21", "text": "شکسته شدن حکومت نظامی به فرمان حضرت امام خمینی (ره) (1357)", "isHoliday": false}, {"jDate": "1405/11/22", "text": "پیروزی انقلاب اسلامی ایران و سقوط نظام شاهنشاهی (1357)", "isHoliday": false}, {"jDate": "1405/11/29", "text": "قیام مردم تبریز به مناسبت چهلمین روز شهادت شهدای قم", "isHoliday": false}, {"jDate": "1405/12/05", "text": "روز بزرگداشت خواجه نصیر الدین طوسی؛ روز مهندسی", "isHoliday": false}, {"jDate": "1405/12/08", "text": "روز امور تربیتی", "isHoliday": false}, {"jDate": "1405/12/09", "text": "روز ملی حمایت از حقوق مصرف کنندگان", "isHoliday": false}, {"jDate": "1405/12/14", "text": "روز احسان و نیکوکاری", "isHoliday": false}, {"jDate": "1405/12/15", "text": "روز درختکاری", "isHoliday": false}, {"jDate": "1405/12/20", "text": "روز راهیان نور", "isHoliday": false}, {"jDate": "1405/12/22", "text": "روز بزرگداشت شهدا (سالروز صدور فرمان حضرت امام خمینی (ره) مبنی بر تاسیس بنیاد شهید انقلاب اسلامی-1358)؛ روز تکریم مادران و همسران شهدا", "isHoliday": false}, {"jDate": "1405/12/25", "text": "بمباران شیمیایی حلبچه توسط ارتش بعث عراق (1366)", "isHoliday": false}, {"jDate": "1405/12/29", "text": "روز ملی شدن صنعت نفت ایران (1329)", "isHoliday": false}];
+let EVENTS_ALL=[];
+function parseJDate(str){
+  if(!str) return null;
+  const p=String(str).replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).split(/[\/\-]/).map(x=>parseInt(x,10));
+  if(p.length<3||p.some(isNaN)) return null;
+  return {y:p[0],m:p[1],d:p[2]};
+}
+function loadEventsFromStore(){
+  try{ EVENTS_ALL=JSON.parse(localStorage.getItem('dash_events')||'null'); }catch(e){ EVENTS_ALL=null; }
+  // اگر فایل جدیدی بارگذاری نشده، رویدادهای سال ۱۴۰۵ داخل برنامه استفاده می‌شوند
+  if(!Array.isArray(EVENTS_ALL)||!EVENTS_ALL.length) EVENTS_ALL=DEFAULT_EVENTS;
+  const jt=jParts(new Date().toISOString());
+  EVENTS_TODAY=EVENTS_ALL.filter(e=>{const p=parseJDate(e.jDate||e.date); return p&&p.y===jt.y&&p.m===jt.m&&p.d===jt.d})
+    .map(e=>({text:e.text||e.title||'', holiday:!!e.isHoliday}));
+  EVENTS_ERR=null;
+}
+async function loadEvents(){ loadEventsFromStore(); }
+
+
+function dailyHtml(){
+  const dayNum=Math.floor((Date.now()-new Date(2026,0,1))/864e5);
+  const h=HADITHS[Math.abs(dayNum)%HADITHS.length];
+  const jt=jParts(new Date().toISOString());
+  const fmt=v=>v?fa(v):'—';
+
+  const evHtml=EVENTS_ERR&&!EVENTS_TODAY.length
+    ?`<div class="muted">خطا: ${esc(EVENTS_ERR)}</div>`
+    :(EVENTS_TODAY.length
+      ?EVENTS_TODAY.map(e=>`<div class="pr" style="display:block">${e.holiday?'🔴 ':''}${esc(e.text)}</div>`).join('')
+      :'<div class="muted">رویداد خاصی برای امروز ثبت نشده</div>');
+
+  return `
+    <div class="tile"><h4>حدیث امروز</h4><p style="font-size:.95rem;line-height:1.7">«${esc(h.t)}»</p><div class="muted" style="margin-top:.4rem">${esc(h.w)} · ${esc(h.s)}</div></div>
+    <div class="tile"><h4>امروز در تقویم <span class="muted" style="font-weight:500;font-size:.75rem">(رویدادهای ۱۴۰۵)</span></h4><div class="muted" style="margin-bottom:4px">${fa(jt.d)} ${MONTHS[jt.m-1]} ${fa(jt.y)}</div>${evHtml}</div>
+  `;
+}
+
+/* Charts */
+function drawCharts(){
+  const cnt=s=>data.tasks.filter(t=>t.status===s).length;
+  const open=cnt('جدید'), run=cnt('در حال انجام'), wait=cnt('پیگیری'), done=cnt('خاتمه یافته');
+  if(cStatus)cStatus.destroy();
+  cStatus=new Chart(document.getElementById('cStatus'),{
+    type:'doughnut',
+    data:{labels:['جدید','در حال انجام','پیگیری','خاتمه یافته'],datasets:[{data:[open,run,wait,done],backgroundColor:['#3b82f6','#14b8a6','#f59e0b','#22c55e'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',font:{family:'Vazirmatn',size:12}}}}}
+  });
+
+  // Last 14 days activity
+  const days=[];
+  const doneCnt=[];
+  const progSum=[];
+  for(let i=13;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i); d.setHours(0,0,0,0);
+    const next=new Date(d); next.setDate(next.getDate()+1);
+    const jp=jParts(d.toISOString());
+    days.push(fa(jp.d)+'/'+fa(jp.m));
+    const dayTasks=data.tasks.filter(t=>{
+      const at=t.updatedAt||t.createdAt;
+      if(!at)return false;
+      const ts=new Date(at).getTime();
+      return ts>=d.getTime()&&ts<next.getTime();
+    });
+    doneCnt.push(dayTasks.filter(t=>t.status==='خاتمه یافته').length);
+    const avgProg=dayTasks.length?Math.round(dayTasks.reduce((s,t)=>s+(+t.progress||0),0)/dayTasks.length):0;
+    progSum.push(avgProg);
+  }
+  if(cRecent)cRecent.destroy();
+  cRecent=new Chart(document.getElementById('cRecent'),{
+    type:'bar',
+    data:{
+      labels:days,
+      datasets:[
+        {label:'خاتمه یافته',data:doneCnt,backgroundColor:'#22c55e',borderRadius:4},
+        {label:'میانگین پیشرفت ٪',data:progSum,backgroundColor:'#14b8a6',borderRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{
+        x:{ticks:{color:'#94a3b8',font:{family:'Vazirmatn',size:10}},grid:{color:'rgba(255,255,255,.05)'}},
+        y:{ticks:{color:'#94a3b8',font:{family:'Vazirmatn'}},grid:{color:'rgba(255,255,255,.05)'},beginAtZero:true}
+      },
+      plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',font:{family:'Vazirmatn',size:11}}}}
+    }
+  });
+}
+
+/* Reminders */
+let AC=null;
+function beep(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();[0,.3,.6].forEach(d=>{const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=880;g.gain.value=.12;o.connect(g).connect(AC.destination);o.start(AC.currentTime+d);o.stop(AC.currentTime+d+.18)})}catch{}}
+function askNotif(){try{if('Notification' in window&&Notification.permission==='default')Notification.requestPermission()}catch{}}
+function alertDue(t,when,kind){
+  const title=(kind==='overdue'?'عقب‌افتاده: ':'یادآوری: ')+t.title;
+  toast(title); beep();
+  try{ if(Notification.permission==='granted') new Notification(title,{body:toJalaliStr(when||t.due||''),tag:t.id+':'+(when||kind)}) }catch(e){}
+}
+function taskReminders(t){
+  const list=[]; if(t.reminder) list.push(t.reminder);
+  (t.reminders||[]).forEach(r=>{ if(r && !list.includes(r)) list.push(r) });
+  return list;
+}
+function inQuiet(d){
+  const q=(data.settings&&data.settings.quiet)||null; if(!q||!q.from||!q.to) return false;
+  const m=d.getHours()*60+d.getMinutes();
+  const [fh,fm]=q.from.split(':').map(Number), [th,tm]=q.to.split(':').map(Number);
+  const a=fh*60+fm, b=th*60+tm;
+  return a<=b ? (m>=a && m<b) : (m>=a || m<b);
+}
+function nextRecur(iso,recur){
+  const now=Date.now(); let d=new Date(iso);
+  do{
+    if(recur==='monthly') d=new Date(d.getFullYear(),d.getMonth()+1,d.getDate(),d.getHours(),d.getMinutes());
+    else d=new Date(d.getTime()+(recur==='weekly'?7:1)*DAY);
+  }while(d.getTime()<=now);
+  return d.toISOString();
+}
+function checkReminders(){
+  const now=Date.now(); let ch=applyAutoStatus(); const today=todayKey();
+  const quiet=inQuiet(new Date());
+  data.tasks.forEach(t=>{
+    if(t.status==='خاتمه یافته') return;
+    t.notifiedList=t.notifiedList||[];
+    if(t.reminder && t.notified===t.reminder && !t.notifiedList.includes(t.reminder)) t.notifiedList.push(t.reminder);
+    if(quiet) return;   // در ساعت سکوت هشداری داده نمی‌شود؛ بعد از پایان سکوت اعلام می‌شوند
+    taskReminders(t).forEach(r=>{
+      if(new Date(r).getTime()<=now && !t.notifiedList.includes(r)){
+        t.notifiedList.push(r); t.notified=t.reminder||t.notified; ch=true; alertDue(t,r,'remind');
+        if(t.recur && t.recur!=='none'){
+          const nx=nextRecur(r,t.recur);
+          t.reminders=(t.reminders||[]).filter(x=>x!==r);
+          if(t.reminder===r) t.reminder='';
+          t.reminders.push(nx);
+        }
+      }
+    });
+    if(t.due && new Date(t.due).getTime()<now && t.overdueDay!==today){
+      t.overdueDay=today; ch=true; alertDue(t,null,'overdue');
+    }
+  });
+  if(!quiet) (data.personal||[]).forEach(p=>{
+    if(p.done) return;
+    if(new Date(p.at).getTime()<=now && p.notifiedAt!==p.at){
+      p.notifiedAt=p.at; ch=true; alertDue({id:p.id,title:p.title,due:p.at},p.at,'personal');
+      if(p.recur && p.recur!=='none'){ p.at=nextRecur(p.at,p.recur); p.notifiedAt=''; }
+    }
+  });
+  if(ch){ save(); if(page==='dash'||page==='remind') render() }
+}
+function openTasks(){return data.tasks.filter(t=>t.status!=='خاتمه یافته')}
+
+function render(){
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.page===page));
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id==='page-'+page));
+  if(page==='dash'){
+    document.getElementById('dailyBox').innerHTML=dailyHtml();
+    drawCharts();
+    const rems=openTasks().filter(t=>t.reminder).sort((a,b)=>a.reminder.localeCompare(b.reminder));
+    document.getElementById('remindersBox').innerHTML=rems.length?`
+      <div class="card" style="border-right:3px solid var(--amber)">
+        <h3 style="margin-bottom:.45rem">یادآوری‌ها <span class="muted">(${fa(rems.length)})</span></h3>
+        <div class="task-grid">${rems.map(t=>taskCard(t)).join('')}</div>
+      </div>`:'';
+    renderHomeTasks();
+  }
+  if(page==='tasks')renderTasks();
+  if(page==='cal')renderCal();
+  if(page==='contacts')renderContacts();
+  if(page==='stake')renderStake();
+  if(page==='report')renderReport();
+  if(page==='remind')renderRemind();
+  if(page==='notes')ntRender();
+  if(page==='focus')fcRender();
+  if(page==='settings'){ renderCloudStatus(); renderConflicts() }
+  if(page==='dash')renderSmart();
+  if(page==='settings'){
+    document.getElementById('setName').value=data.settings.name||'';
+
+    const cfg=getFbCfg()||{};
+    const set=(id,v)=>{const el=document.getElementById(id); if(el && document.activeElement!==el) el.value=v||'';};
+    set('fbApiKey',cfg.apiKey); set('fbAuth',cfg.authDomain); set('fbDb',cfg.databaseURL);
+    set('fbPid',cfg.projectId); set('fbPath',cfg.path||'dashboard/shared');
+
+  }
+}
+
+function taskCard(t){
+  const stc=t.status==='خاتمه یافته'?'b-done':t.status==='پیگیری'?'b-wait':t.status==='در حال انجام'?'b-run':'b-open';
+  const pri=t.priority||'عادی';
+  const prc=PRI_RANK[pri]>=3?'b-high':pri==='متوسط'?'b-wait':'b-عادی';
+  return `<div class="task" data-action="openTask" data-id="${t.id}">
+    <div class="ico">${taskIcon(t.title)}</div>
+    <div class="body">
+      <div class="title" title="${esc(t.title)}">${esc(t.title)}</div>
+      <div class="meta">
+        <span class="badge ${stc}">${esc(t.status)}</span>
+        <span class="badge ${prc}">${esc(pri)}</span>
+        ${taskCats(t).map(c=>`<span class="badge b-cat">${esc(c)}</span>`).join('')}
+        ${t.progress?`<span>${fa(t.progress)}٪</span>`:''}
+        ${t.reminder?`<span>🔔 ${toJalaliStr(t.reminder)}</span>`:''}
+        ${t.due?`<span>📅 ${toJalaliStr(t.due)}</span>`:''}
+        ${t.createdAt?`<span class="muted">${toJalaliStr(t.createdAt).split(' · ')[0]}</span>`:''}
+      </div>
+      ${t.progress?`<div class="prog-bar"><i style="width:${t.progress}%"></i></div>`:''}
+    </div>
+  </div>`;
+}
+
+function renderHomeTasks(){
+  const f=document.getElementById('homeFilter')?.value||'';
+  const list=data.tasks.filter(t=>f?t.status===f:t.status!=='خاتمه یافته');
+  const cnt=document.getElementById('homeTaskCnt');
+  if(cnt) cnt.textContent='('+fa(list.length)+')';
+  const el=document.getElementById('openTasks');
+  if(!el) return;
+  if(!list.length){ el.innerHTML='<div class="empty">کاری نیست</div>'; return; }
+  el.innerHTML=CATS.map(c=>{
+    const items=list.filter(t=>taskCats(t).includes(c)).sort(byPriority);
+    if(!items.length) return '';
+    return `<div class="cat-h">${esc(c)} <span class="muted">(${fa(items.length)})</span></div><div class="task-grid">${items.map(taskCard).join('')}</div>`;
+  }).join('');
+}
+function renderTasks(){
+  const q=document.getElementById('tq')?.value.trim().toLowerCase()||'';
+  const st=document.getElementById('tStatus')?.value||'';
+  const pr=document.getElementById('tPri')?.value||'';
+  const cat=document.getElementById('tCat')?.value||'';
+  const list=data.tasks.filter(t=>{
+    if(st&&t.status!==st)return false;
+    if(pr&&t.priority!==pr)return false;
+    if(cat&&!taskCats(t).includes(cat))return false;
+    if(q&&!(t.title+' '+(t.desc||'')).toLowerCase().includes(q))return false;
+    return true;
+  }).sort(byPriority);
+  const tc=document.getElementById('taskCnt'); if(tc) tc.textContent='('+fa(list.length)+')';
+  updateExpBox();
+  renderKanbanIfOn();
+  document.getElementById('taskList').innerHTML=list.length?list.map(taskCard).join(''):'<div class="empty">کاری یافت نشد</div>';
+}
+
+function initCal(){const j=jParts(new Date().toISOString());calY=j.y;calM=j.m}
+function daysInJalaliMonth(jy,jm){if(jm<=6)return 31;if(jm<=11)return 30;return [1,5,9,13,17,22,26,30].includes(jy%33)?30:29}
+function renderCal(){
+  document.getElementById('calTitle').textContent=MONTHS[calM-1]+' '+fa(calY);
+  const dim=daysInJalaliMonth(calY,calM);
+  let html='';
+  ['ش','ی','د','س','چ','پ','ج'].forEach(d=>html+=`<div class="hd">${d}</div>`);
+  const today=jParts(new Date().toISOString());
+  for(let d=1;d<=dim;d++){
+    const has=data.tasks.some(t=>{
+      if(!t.due&&!t.reminder)return false;
+      const iso=t.due||t.reminder;
+      const jp=jParts(iso);
+      return jp.y===calY&&jp.m===calM&&jp.d===d;
+    });
+    const isToday=today.y===calY&&today.m===calM&&today.d===d;
+    const isSel=calSel&&calSel.y===calY&&calSel.m===calM&&calSel.d===d;
+    html+=`<div class="day ${isToday?'today':''} ${isSel?'sel':''} ${has?'has':''}" data-action="calDay" data-d="${d}">${fa(d)}</div>`;
+  }
+  document.getElementById('calGrid').innerHTML=html;
+  let dayTasks=[];
+  if(calSel){
+    dayTasks=data.tasks.filter(t=>{
+      const iso=t.due||t.reminder; if(!iso)return false;
+      const jp=jParts(iso);
+      return jp.y===calSel.y&&jp.m===calSel.m&&jp.d===calSel.d;
+    });
+  }
+  document.getElementById('calDayTasks').innerHTML=calSel?
+    (dayTasks.length?`<h3 style="margin-bottom:.6rem">کارهای ${fa(calSel.d)} ${MONTHS[calSel.m-1]}</h3>`+dayTasks.map(taskCard).join(''):'<div class="empty">کاری برای این روز نیست</div>')
+    :'<div class="muted">روزی را انتخاب کنید</div>';
+}
+
+function renderContacts(){
+  const q=document.getElementById('cq')?.value.trim().toLowerCase()||'';
+  let list=data.contacts.filter(c=>{
+    if(!q)return true;
+    return (c.name+' '+(c.phones||[]).join(' ')).toLowerCase().includes(q);
+  });
+  list.sort((a,b)=>a.name.localeCompare(b.name,'fa'));
+  document.getElementById('contactList').innerHTML=list.length?list.map(c=>`
+    <div class="contact">
+      <div>
+        <div class="name">${esc(c.name)}</div>
+        <div class="nums">${(c.phones||[]).filter(Boolean).map(p=>esc(p)).join(' · ')}</div>
+        ${c.note?`<div class="muted">${esc(c.note)}</div>`:''}
+      </div>
+      <div class="row">
+        <button class="btn small ghost" data-action="editContact" data-id="${c.id}">ویرایش</button>
+        <button class="btn small danger" data-action="delContactDirect" data-id="${c.id}">حذف</button>
+      </div>
+    </div>
+  `).join(''):'<div class="empty">مخاطبی نیست</div>';
+}
+
+function openTaskModal(id=null){
+  editTaskId=id;
+  document.getElementById('taskModalTitle').textContent=id?'ویرایش کار':'کار جدید';
+  document.getElementById('delTaskBtn').style.display=id?'inline-flex':'none';
+  const hist=document.getElementById('taskHistory');
+  if(id){
+    const t=data.tasks.find(x=>x.id===id);
+    if(!t)return;
+    fTitle.value=t.title; fStatus.value=t.status; fPri.value=t.priority||'عادی';
+    fCat1.value=t.cat1||'سایر'; fCat2.value=t.cat2||'';
+    fProg.value=t.progress||0; fDesc.value=t.desc||'';
+    // Jalali display for due/rem
+    if(t.due){
+      const j=toJalaliStr(t.due).split(' · ')[0].replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c));
+      fDue.value=j;
+      const d=new Date(t.due);
+      fDueTime.value=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    }else{fDue.value='';fDueTime.value=''}
+    if(t.reminder){
+      const j=toJalaliStr(t.reminder).split(' · ')[0].replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c));
+      fRem.value=j;
+      const d=new Date(t.reminder);
+      fRemTime.value=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    }else{fRem.value='';fRemTime.value=''}
+    hist.innerHTML=(t.history&&t.history.length)?`<h4 style="margin:1rem 0 .4rem">تاریخچه تغییرات</h4>`+t.history.slice().reverse().map(h=>`<div class="log"><b>${esc(h.by||'سیستم')}</b> · ${toJalaliStr(h.at)}<br>${esc(h.text)}</div>`).join(''):'';
+  }else{
+    fTitle.value=''; fStatus.value='جدید'; fPri.value='عادی'; fCat1.value='سایر'; fCat2.value=''; fProg.value=0; fDesc.value='';
+    fDue.value=''; fDueTime.value=''; fRem.value=''; fRemTime.value=''; hist.innerHTML='';
+  }
+  document.getElementById('taskModal').classList.add('open');
+  setTimeout(()=>{if(window.jalaliDatepicker)jalaliDatepicker.startWatch()},40);
+}
+function saveTask(){
+  const title=fTitle.value.trim(); if(!title){toast('عنوان لازم است');return}
+  const name=data.settings.name||'کاربر';
+  const dueIso=fromJalaliStr(fDue.value,fDueTime.value);
+  const remIso=fromJalaliStr(fRem.value,fRemTime.value);
+  if(editTaskId){
+    const t=data.tasks.find(x=>x.id===editTaskId);
+    if(!t)return;
+    const changes=[];
+    if(t.title!==title)changes.push('عنوان تغییر کرد');
+    if(t.status!==fStatus.value)changes.push('وضعیت → '+fStatus.value);
+    if((t.progress||0)!==(+fProg.value||0))changes.push('پیشرفت → '+fProg.value+'٪');
+    if((t.cat1||'')!==fCat1.value)changes.push('دسته‌بندی تغییر کرد');
+    t.cat1=fCat1.value; t.cat2=fCat2.value===fCat1.value?'':fCat2.value;
+    t.title=title; t.status=fStatus.value; t.priority=fPri.value;
+    t.progress=+fProg.value||0; t.desc=fDesc.value.trim();
+    t.due=dueIso; t.reminder=remIso;
+    t.updatedAt=nowISO();
+    t.history=t.history||[];
+    if(changes.length)t.history.push({at:nowISO(),by:name,text:changes.join(' · ')});
+    toast('کار به‌روز شد');
+  }else{
+    data.tasks.unshift({
+      id:uid(), title, status:fStatus.value, priority:fPri.value,
+      cat1:fCat1.value, cat2:fCat2.value===fCat1.value?'':fCat2.value,
+      progress:+fProg.value||0, desc:fDesc.value.trim(),
+      due:dueIso, reminder:remIso, notified:'',
+      createdAt:nowISO(), updatedAt:nowISO(),
+      history:[{at:nowISO(),by:name,text:'ایجاد کار'}]
+    });
+    toast('کار افزوده شد');
+  }
+  save(); closeTaskModal(); render();
+}
+function closeTaskModal(){document.getElementById('taskModal').classList.remove('open')}
+function delTask(){
+  if(!editTaskId) return;
+  if(!confirm('کار به سطل زباله منتقل شود؟ تا حذف دائمی قابل بازگردانی است.')) return;
+  moveTask(editTaskId,'trash'); closeTaskModal(); render(); toast('به سطل زباله منتقل شد');
+}
+
+function openContactModal(id=null){
+  editContactId=id;
+  document.getElementById('contactModalTitle').textContent=id?'ویرایش مخاطب':'مخاطب جدید';
+  document.getElementById('delContactBtn').style.display=id?'inline-flex':'none';
+  if(id){
+    const c=data.contacts.find(x=>x.id===id);
+    if(!c)return;
+    cName.value=c.name; cPhone1.value=(c.phones||[])[0]||''; cPhone2.value=(c.phones||[])[1]||'';
+    cPhone3.value=(c.phones||[])[2]||''; cNote.value=c.note||'';
+  }else{cName.value='';cPhone1.value='';cPhone2.value='';cPhone3.value='';cNote.value=''}
+  document.getElementById('contactModal').classList.add('open');
+}
+function saveContact(){
+  const name=cName.value.trim(); if(!name){toast('نام لازم است');return}
+  const phones=[cPhone1.value.trim(),cPhone2.value.trim(),cPhone3.value.trim()].filter(Boolean);
+  if(!phones.length){toast('حداقل یک شماره وارد کنید');return}
+  if(editContactId){
+    const c=data.contacts.find(x=>x.id===editContactId);
+    if(c){c.name=name;c.phones=phones;c.note=cNote.value.trim()}
+    toast('مخاطب به‌روز شد');
+  }else{
+    data.contacts.push({id:uid(),name,phones,note:cNote.value.trim()});
+    toast('مخاطب افزوده شد');
+  }
+  save(); closeContactModal(); renderContacts();
+}
+function closeContactModal(){document.getElementById('contactModal').classList.remove('open')}
+
+
+function exportCSV(src,label){
+  const h=['عنوان','دسته ۱','دسته ۲','وضعیت','اولویت','پیشرفت٪','یادداشت','یادآوری','تاریخ ایجاد','آخرین بروزرسانی'];
+  let csv='\uFEFF'+h.join(',')+'\n';
+  const list=[...(Array.isArray(src)?src:data.tasks)].sort((a,b)=>(a.createdAt||'').localeCompare(b.createdAt||''));
+  list.forEach(t=>{
+    const row=[t.title,t.cat1||'',t.cat2||'',t.status,t.priority||'',t.progress||0,t.desc||'',toJalaliStr(t.reminder),toJalaliStr(t.createdAt),toJalaliStr(t.updatedAt)]
+      .map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',');
+    csv+=row+'\n';
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='کارها_'+(label||'همه')+'_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  toast('فایل Excel (CSV) آماده شد');
+}
+function exportPDF(src){
+  const list=[...(Array.isArray(src)?src:data.tasks)].sort((a,b)=>(a.createdAt||'').localeCompare(b.createdAt||''));
+  const rows=list.map((t,i)=>`<tr>
+    <td>${fa(i+1)}</td>
+    <td>${esc(t.title)}</td>
+    <td>${esc(taskCats(t).join('، '))}</td>
+    <td>${esc(t.status)}</td>
+    <td>${esc(t.priority||'')}</td>
+    <td>${fa(t.progress||0)}٪</td>
+    <td>${toJalaliStr(t.createdAt)}</td>
+    <td>${toJalaliStr(t.reminder)}</td>
+    <td>${esc(t.desc||'')}</td>
+  </tr>`).join('');
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><title>گزارش کارها</title>
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+  <style>
+  body{font-family:Vazirmatn,Tahoma,sans-serif;padding:1.5rem;color:#0f172a;font-size:12px}
+  h1{font-size:1.2rem;margin-bottom:.3rem} .sub{color:#64748b;margin-bottom:1rem}
+  table{width:100%;border-collapse:collapse} th,td{border:1px solid #e2e8f0;padding:.4rem .5rem;text-align:right}
+  th{background:#0f172a;color:#fff;font-size:11px} tr:nth-child(even){background:#f8fafc}
+  @media print{body{padding:0}}
+  </style></head><body>
+  <h1>گزارش کارها</h1>
+  <div class="sub">تعداد: ${fa(list.length)} · تاریخ چاپ: ${toJalaliStr(new Date().toISOString())}</div>
+  <table><thead><tr><th>#</th><th>عنوان</th><th>دسته</th><th>وضعیت</th><th>اولویت</th><th>پیشرفت</th><th>تاریخ ایجاد</th><th>یادآوری</th><th>یادداشت</th></tr></thead>
+  <tbody>${rows}</tbody></table>
+  <script>setTimeout(()=>window.print(),400)<\/script>
+  </body></html>`);
+  w.document.close();
+  toast('پنجره چاپ باز شد');
+}
+
+document.addEventListener('click',e=>{
+  const nav=e.target.closest('[data-page]');
+  if(nav){page=nav.dataset.page;render();return}
+  const a=e.target.closest('[data-action]'); if(!a)return;
+  const act=a.dataset.action, id=a.dataset.id;
+  if(act==='addTask')openTaskModal();
+  if(act==='openTask')openTaskModal(id);
+  if(act==='saveTask')saveTask();
+  if(act==='delTask')delTask();
+  if(act==='closeTask')closeTaskModal();
+  if(act==='addContact')openContactModal();
+  if(act==='editContact')openContactModal(id);
+  if(act==='saveContact')saveContact();
+  if(act==='delContact'){if(editContactId&&confirm('حذف؟')){data.contacts=data.contacts.filter(c=>c.id!==editContactId);save();closeContactModal();renderContacts();toast('حذف شد')}}
+  if(act==='delContactDirect'){if(confirm('حذف؟')){data.contacts=data.contacts.filter(c=>c.id!==id);save();renderContacts();toast('حذف شد')}}
+  if(act==='closeContact')closeContactModal();
+  if(act==='calPrev'){calM--;if(calM<1){calM=12;calY--}calSel=null;renderCal()}
+  if(act==='calNext'){calM++;if(calM>12){calM=1;calY++}calSel=null;renderCal()}
+  if(act==='calToday'){const t=jParts(new Date().toISOString());calY=t.y;calM=t.m;calSel={y:t.y,m:t.m,d:t.d};renderCal()}
+  if(act==='calDay'){calSel={y:calY,m:calM,d:+a.dataset.d};renderCal()}
+  if(act==='saveSettings'){
+    data.settings.name=document.getElementById('setName').value.trim()||'کاربر';
+    save(); toast('تنظیمات ذخیره شد'); render();
+  }
+  if(act==='saveCloud'){
+    const cfg={
+      apiKey: document.getElementById('fbApiKey')?.value?.trim(),
+      authDomain: document.getElementById('fbAuth')?.value?.trim(),
+      databaseURL: document.getElementById('fbDb')?.value?.trim(),
+      projectId: document.getElementById('fbPid')?.value?.trim(),
+      path: document.getElementById('fbPath')?.value?.trim()||'dashboard/shared'
+    };
+    if(!cfg.apiKey || !cfg.databaseURL){ toast('apiKey و databaseURL لازم است'); return; }
+    if(!confirm('اگر ابر داده داشته باشد، داده‌های این دستگاه با داده‌های ابری جایگزین می‌شوند. پیش از ادامه پشتیبان JSON بگیرید. ادامه می‌دهید؟')) return;
+    setFbCfg(cfg);
+    toast('ذخیره شد؛ اتصال برقرار می‌شود…');
+    setTimeout(()=>location.reload(),700);
+  }
+  if(act==='clearCloud'){
+    stopCloud(); setFbCfg(null); updateCloudBadge();
+    toast('همگام‌سازی ابری قطع شد');
+  }
+  if(act==='exportCSV')exportCSV();
+  if(act==='exportPDF')exportPDF();
+  if(act==='exportData') exportFullBackup();
+  if(act==='importData')document.getElementById('importFile').click();
+  if(act==='importEvents')document.getElementById('eventsFile').click();
+});
+document.getElementById('eventsFile').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const raw=JSON.parse(r.result);
+      const arr=Array.isArray(raw)?raw:(Object.values(raw).find(Array.isArray)||[]);
+      if(!arr.length){toast('فایل رویدادی پیدا نشد');return}
+      localStorage.setItem('dash_events',JSON.stringify(arr));
+      loadEventsFromStore(); render();
+      toast('رویدادها بارگذاری شد: '+fa(arr.length));
+    }catch(err){ toast('فایل نامعتبر است'); console.error(err) }
+  };
+  r.readAsText(f); e.target.value='';
+});
+document.getElementById('importFile').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>importBackupText(r.result);
+  r.readAsText(f);
+});
+
+/* ===== v14: خروجی کارها بر اساس وضعیت ===== */
+let expSel=new Set(STATUSES);
+function updateExpBox(){
+  const box=document.getElementById('expChecks'); if(!box) return;
+  box.innerHTML=STATUSES.map(s=>{
+    const n=data.tasks.filter(t=>t.status===s).length;
+    return `<label class="chk"><input type="checkbox" value="${esc(s)}"${expSel.has(s)?' checked':''}> ${esc(s)} <span class="muted">(${fa(n)})</span></label>`;
+  }).join('');
+  const total=data.tasks.filter(t=>expSel.has(t.status)).length;
+  const msg=document.getElementById('expMsg');
+  if(msg) msg.textContent=expSel.size?('کارهای انتخاب‌شده: '+fa(total)):'حداقل یک وضعیت را انتخاب کنید';
+}
+document.getElementById('expChecks').addEventListener('change',e=>{
+  const v=e.target.value; if(!v) return;
+  if(e.target.checked) expSel.add(v); else expSel.delete(v);
+  updateExpBox();
+});
+function exportSelected(kind){
+  if(!expSel.size){toast('حداقل یک وضعیت را انتخاب کنید');return}
+  const list=data.tasks.filter(t=>expSel.has(t.status));
+  if(!list.length){
+    document.getElementById('expMsg').textContent='کاری با وضعیت‌های انتخاب‌شده وجود ندارد';
+    toast('کاری مطابق فیلتر یافت نشد'); return;
+  }
+  const label=[...expSel].join('+');
+  if(kind==='csv') exportCSV(list,label); else exportPDF(list);
+}
+function exportAll(kind){
+  if(!data.tasks.length){toast('کاری برای خروجی وجود ندارد');return}
+  if(kind==='csv') exportCSV(data.tasks,'همه'); else exportPDF(data.tasks);
+}
+
+/* ===== v14: ذی‌نفعان ===== */
+let stEditId=null, stShown=new Set(), stAllShown=false;
+const FA_DIGITS='۰۱۲۳۴۵۶۷۸۹', AR_DIGITS='٠١٢٣٤٥٦٧٨٩';
+function fxDigits(s){return String(s||'').replace(/[۰-۹]/g,c=>FA_DIGITS.indexOf(c)).replace(/[٠-٩]/g,c=>AR_DIGITS.indexOf(c)).trim()}
+function maskNum(v){
+  const c=String(v||'').replace(/\s/g,'');
+  if(!c) return '—';
+  if(c.length<=4) return '••••';
+  return '•'.repeat(c.length-4)+c.slice(-4);
+}
+function hasEnc(s){ return [...s.cards,...s.accounts,...s.shebas].some(v=>String(v).startsWith('enc1:')) }
+function bankView(s){
+  const bp=bankPlain[s.id];
+  if(bp) return {plain:true,v:bp};
+  if(!hasEnc(s)) return {plain:true,v:{cards:s.cards,accounts:s.accounts,shebas:s.shebas}};
+  return {plain:false,v:null};
+}
+function stMatch(s,q){
+  if(!q) return true;
+  const qn=fxDigits(q).toLowerCase().replace(/[\s\-]/g,'');
+  const view=bankView(s), l4=s.l4||{};
+  const bank=view.plain?[...view.v.cards,...view.v.accounts,...view.v.shebas]:[];
+  const fields=[s.name,s.phone,...bank,...(l4.cards||[]),...(l4.accounts||[]),...(l4.shebas||[])];
+  return fields.some(f=>fxDigits(f).toLowerCase().replace(/[\s\-]/g,'').includes(qn));
+}
+function stBank(label,key,s,view,show){
+  const l4=(s.l4&&s.l4[key])||[];
+  return [0,1].map(i=>{
+    const head=`${label} ${fa(i+1)}`;
+    if(view.plain){
+      const v=view.v[key][i]||'';
+      const txt=show?(v||'—'):maskNum(v);
+      return `<div class="bank-row"><span class="muted">${head}</span><span class="num">${esc(txt)}</span>${show&&v?`<button class="btn small ghost" data-action="stCopy" data-val="${esc(v)}">کپی</button>`:''}</div>`;
+    }
+    const t=l4[i]?'•••• '+l4[i]:'—';
+    return `<div class="bank-row"><span class="muted">${head}</span><span class="num">${esc(t)}</span></div>`;
+  }).join('');
+}
+function stCard(s){
+  const view=bankView(s);
+  const show=view.plain && stShown.has(s.id);
+  return `<div class="stake-card">
+    <div style="font-weight:700;font-size:.98rem">${esc(s.name)}</div>
+    ${s.phone?`<div class="bank-row"><span class="muted">تلفن</span><span class="num">${esc(s.phone)}</span><button class="btn small ghost" data-action="stCopy" data-val="${esc(s.phone)}">کپی</button></div>`:''}
+    ${s.note?`<div class="muted" style="margin:.3rem 0">${esc(s.note)}</div>`:''}
+    <h4 class="muted">کارت</h4>${stBank('کارت','cards',s,view,show)}
+    <h4 class="muted">حساب</h4>${stBank('حساب','accounts',s,view,show)}
+    <h4 class="muted">شبا</h4>${stBank('شبا','shebas',s,view,show)}
+    <div class="row" style="margin-top:.6rem">
+      <button class="btn small ghost" data-action="stEye" data-id="${s.id}">${show?'مخفی کردن':'نمایش'}</button>
+      <button class="btn small ghost" data-action="stEdit" data-id="${s.id}">ویرایش</button>
+      <button class="btn small danger" data-action="stDel" data-id="${s.id}">حذف</button>
+    </div>
+  </div>`;
+}
+function renderStake(){
+  const q=document.getElementById('stQ')?.value.trim()||'';
+  const list=data.stakeholders.filter(s=>stMatch(s,q)).sort((a,b)=>a.name.localeCompare(b.name,'fa'));
+  const cnt=document.getElementById('stCnt'); if(cnt) cnt.textContent='('+fa(list.length)+')';
+  updateVaultBtn();
+  const tb=document.getElementById('stToggleAllBtn');
+  if(tb) tb.textContent=stAllShown?'مخفی‌سازی اطلاعات بانکی':'نمایش اطلاعات بانکی';
+  const el=document.getElementById('stList'); if(!el) return;
+  if(!data.stakeholders.length){el.innerHTML='<div class="empty">ذی‌نفعی ثبت نشده است</div>';return}
+  if(!list.length){el.innerHTML='<div class="empty">موردی با این جست‌وجو پیدا نشد</div>';return}
+  el.innerHTML=list.map(stCard).join('');
+}
+function openStake(id=null){
+  if(!data.vault) return openVault('setup',()=>openStake(id));
+  if(!vaultKey) return openVault('unlock',()=>openStake(id));
+  stEditId=id;
+  const s=id?data.stakeholders.find(x=>x.id===id):null;
+  if(id&&!s) return;
+  const bp=(s&&bankPlain[s.id])||{cards:['',''],accounts:['',''],shebas:['','']};
+  document.getElementById('stakeTitle').textContent=s?'ویرایش ذی‌نفع':'ثبت ذی‌نفع جدید';
+  const set=(el,v)=>{document.getElementById(el).value=v||''};
+  set('sName',s?s.name:''); set('sPhone',s?s.phone:''); set('sNote',s?s.note:'');
+  set('sCard1',bp.cards[0]); set('sCard2',bp.cards[1]);
+  set('sAcc1',bp.accounts[0]); set('sAcc2',bp.accounts[1]);
+  set('sSh1',bp.shebas[0]); set('sSh2',bp.shebas[1]);
+  document.getElementById('stakeModal').classList.add('open');
+}
+function closeStake(){document.getElementById('stakeModal').classList.remove('open')}
+async function stSave(){
+  const g=id=>fxDigits(document.getElementById(id).value);
+  const gn=id=>g(id).replace(/[\s\-]/g,'');
+  const name=g('sName'); if(!name){toast('نام لازم است');return}
+  const plain={cards:[gn('sCard1'),gn('sCard2')],accounts:[gn('sAcc1'),gn('sAcc2')],shebas:[gn('sSh1'),gn('sSh2')]};
+  const id=stEditId||uid();
+  const last4=arr=>arr.map(v=>String(v).slice(-4));
+  const rec={name,phone:g('sPhone'),note:document.getElementById('sNote').value.trim(),
+    l4:{cards:last4(plain.cards),accounts:last4(plain.accounts),shebas:last4(plain.shebas)}};
+  if(vaultKey){
+    rec.cards=await encList(plain.cards); rec.accounts=await encList(plain.accounts); rec.shebas=await encList(plain.shebas);
+    bankPlain[id]=plain;
+  }else{ Object.assign(rec,plain); }
+  if(stEditId){
+    const s=data.stakeholders.find(x=>x.id===stEditId);
+    if(s) Object.assign(s,rec);
+    toast('اطلاعات به‌روز شد');
+  }else{
+    data.stakeholders.push(Object.assign({id},rec));
+    toast('ذی‌نفع ثبت شد');
+  }
+  save(); closeStake(); renderStake();
+}
+function stDel(id){
+  const s=data.stakeholders.find(x=>x.id===id); if(!s) return;
+  if(!confirm('ذی‌نفع «'+s.name+'» و همه شماره‌هایش حذف شود؟')) return;
+  data.stakeholders=data.stakeholders.filter(x=>x.id!==id);
+  stShown.delete(id); save(); renderStake(); toast('حذف شد');
+}
+function stEye(id){
+  if(data.vault && !vaultKey) return openVault('unlock',()=>stEye(id));
+  if(stShown.has(id)) stShown.delete(id); else stShown.add(id);
+  renderStake();
+}
+function stToggleAll(){
+  if(data.vault && !vaultKey) return openVault('unlock',()=>stToggleAll());
+  stAllShown=!stAllShown;
+  stShown=new Set(stAllShown?data.stakeholders.map(s=>s.id):[]);
+  renderStake();
+}
+function fallbackCopy(v,done){
+  const t=document.createElement('textarea'); t.value=v;
+  t.style.position='fixed'; t.style.opacity='0';
+  document.body.appendChild(t); t.select();
+  let ok=false; try{ok=document.execCommand('copy')}catch(e){}
+  t.remove(); ok?done():toast('کپی انجام نشد');
+}
+function copyText(v){
+  const done=()=>toast('کپی شد ✓');
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(v).then(done).catch(()=>fallbackCopy(v,done));
+  else fallbackCopy(v,done);
+}
+
+/* ===== v14: کلیک‌های بخش‌های جدید ===== */
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-action]'); if(!a) return;
+  switch(a.dataset.action){
+    case 'xSelAll': STATUSES.forEach(s=>expSel.add(s)); updateExpBox(); break;
+    case 'xClearAll': expSel.clear(); updateExpBox(); break;
+    case 'xCSV': exportSelected('csv'); break;
+    case 'xPDF': exportSelected('pdf'); break;
+    case 'xCSVAll': exportAll('csv'); break;
+    case 'xPDFAll': exportAll('pdf'); break;
+    case 'stAdd': openStake(); break;
+    case 'stEdit': openStake(a.dataset.id); break;
+    case 'stDel': stDel(a.dataset.id); break;
+    case 'stEye': stEye(a.dataset.id); break;
+    case 'stToggleAll': stToggleAll(); break;
+    case 'stCopy': copyText(a.dataset.val); break;
+    case 'stSave': stSave(); break;
+    case 'stClose': closeStake(); break;
+  }
+});
+
+/* ===== v15: پس‌زمینه طبیعت (Crossfade، هر ۶۰ تا ۱۲۰ ثانیه، بدون وابستگی به اینترنت) ===== */
+const NB_IMAGES=[
+  'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&q=70&w=1600',
+  'https://images.unsplash.com/photo-1758023822490-d67991c886ca?auto=format&fit=crop&q=70&w=1600',
+  'https://images.unsplash.com/photo-1770575454632-a70f66f56089?auto=format&fit=crop&q=70&w=1600',
+  'https://images.unsplash.com/photo-1765871319901-0aaafe3f1a2a?auto=format&fit=crop&q=70&w=1600',
+  'https://images.unsplash.com/photo-1732130318657-c8740c0f5215?auto=format&fit=crop&q=70&w=1600',
+  'https://images.unsplash.com/photo-1544039161-b0c20826c6f6?auto=format&fit=crop&q=70&w=1600',
+  'https://images.unsplash.com/photo-1502252430442-aac78f397426?auto=format&fit=crop&q=70&w=1600',
+  'https://images.unsplash.com/photo-1487621167305-5d248087c724?auto=format&fit=crop&q=70&w=1600',
+  'https://images.unsplash.com/photo-1759790524934-66e5e54e36ca?auto=format&fit=crop&q=70&w=1600',
+  'https://images.unsplash.com/photo-1775471234419-f440ba697d58?auto=format&fit=crop&q=70&w=1600'
+]; // تصاویر از Unsplash (صفحه Misty forest). خالی باشد = سناریوهای گرادیانی داخلی
+const NB_SCENES=[
+  'radial-gradient(ellipse at 50% 75%,rgba(230,240,232,.55),transparent 60%),linear-gradient(180deg,#8fb5a8,#49756b 50%,#1f3d38)',
+  'radial-gradient(ellipse at 40% 30%,rgba(255,255,255,.5),transparent 45%),linear-gradient(180deg,#b9d4e0,#e6efe9 50%,#5f8a7c)',
+  'radial-gradient(ellipse at 50% 88%,#a4cec6,transparent 55%),linear-gradient(180deg,#7FAFC0,#315C55)',
+  'radial-gradient(ellipse at 70% 20%,rgba(255,236,190,.45),transparent 40%),linear-gradient(160deg,#d8c7a0,#b98f5e 50%,#5c6f4f)',
+  'linear-gradient(180deg,#dfe9ea,#A4CEC6 50%,#6b9d95)',
+  'linear-gradient(180deg,#eef3f3,#c9dbe0 50%,#7FAFC0)',
+  'radial-gradient(circle at 70% 78%,rgba(255,240,210,.8),transparent 40%),linear-gradient(180deg,#c9d9d6,#83B8AA 60%,#315C55)',
+  'radial-gradient(circle at 30% 80%,rgba(245,220,180,.7),transparent 40%),linear-gradient(180deg,#8fa9b3,#5d7f7a 60%,#2b4a45)',
+  'linear-gradient(180deg,#e9efe6,#b9cfb4 50%,#6e9a6c)',
+  'repeating-linear-gradient(105deg,rgba(255,255,230,.08) 0 40px,transparent 40px 90px),linear-gradient(180deg,#2a4a44,#16302c)'
+];
+const NB_SPEED={slow:120,standard:90,fast:60};
+let nbCfg=Object.assign({enabled:true,speed:'standard',mode:'random'},(()=>{try{return JSON.parse(localStorage.getItem('dash_bg_cfg')||'{}')}catch(e){return {}}})());
+let nbTimer=null, nbIdx=-1, nbFront=0;
+function nbSources(){return NB_IMAGES.length?NB_IMAGES:NB_SCENES}
+function nbBg(src){return NB_IMAGES.length?'url("'+src+'")':src}
+function nbPick(){
+  const n=nbSources().length; if(n<2) return 0;
+  if(nbCfg.mode==='ordered') return (nbIdx+1)%n;
+  let i; do{i=Math.floor(Math.random()*n)}while(i===nbIdx); return i;
+}
+function nbShow(i){
+  const a=document.getElementById('nbA'), b=document.getElementById('nbB'); if(!a||!b) return;
+  const next=nbFront===0?b:a, cur=nbFront===0?a:b;
+  const src=nbSources()[i];
+  const apply=bg=>{ next.style.backgroundImage=bg; next.classList.add('on'); cur.classList.remove('on'); nbFront=next===b?1:0; nbIdx=i; };
+  if(NB_IMAGES.length){
+    const img=new Image(); let done=false;
+    const fallback=()=>{ if(done) return; done=true; apply(NB_SCENES[i%NB_SCENES.length]) };
+    img.onload=()=>{ if(done) return; done=true; apply(nbBg(src)) };
+    img.onerror=fallback;
+    setTimeout(fallback,6000); // اگر تصویر دیر بارگذاری شد، گرادیان جایگزین می‌شود
+    img.src=src;
+  }else apply(nbBg(src));
+}
+function nbStatic(){
+  const a=document.getElementById('nbA'), b=document.getElementById('nbB'); if(!a||!b) return;
+  b.classList.remove('on'); a.style.backgroundImage=nbBg(nbSources()[Math.max(0,nbIdx)]); a.classList.add('on'); nbFront=0;
+}
+function nbArm(){
+  if(nbTimer||!nbCfg.enabled||nbSources().length<2) return;
+  nbTimer=setInterval(()=>{ if(!document.hidden) nbShow(nbPick()) }, NB_SPEED[nbCfg.speed]*1000);
+}
+function nbStop(){ if(nbTimer){clearInterval(nbTimer);nbTimer=null} }
+function nbStart(){
+  nbStop();
+  if(!nbCfg.enabled){ nbStatic(); return }
+  if(nbIdx<0) nbShow(nbPick()); else nbShow(nbPick());
+  nbArm();
+}
+function nbSyncUI(){
+  const on=document.getElementById('nbOn'); if(!on) return;
+  on.checked=!!nbCfg.enabled;
+  document.getElementById('nbSpeed').value=NB_SPEED[nbCfg.speed]?nbCfg.speed:'standard';
+  document.getElementById('nbMode').value=nbCfg.mode==='ordered'?'ordered':'random';
+}
+function saveBg(){
+  nbCfg={enabled:document.getElementById('nbOn').checked,speed:document.getElementById('nbSpeed').value,mode:document.getElementById('nbMode').value};
+  localStorage.setItem('dash_bg_cfg',JSON.stringify(nbCfg));
+  nbStart(); toast('تنظیمات پس‌زمینه ذخیره شد');
+}
+document.addEventListener('click',e=>{ if(e.target.closest('[data-action="saveBg"]')) saveBg(); });
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) nbStop(); else nbArm(); });
+
+/* ===== مرحله ۲: رمزگذاری شماره‌های بانکی (AES-GCM با کلید PBKDF2) ===== */
+let vaultKey=null, bankPlain={}, lockTimer=null, vaultCb=null, vaultMode='unlock';
+const te=new TextEncoder(), td=new TextDecoder();
+const b64=b=>btoa(String.fromCharCode(...new Uint8Array(b)));
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function deriveKey(pass,salt){
+  const base=await crypto.subtle.importKey('raw',te.encode(pass),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:200000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function encVal(text){
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},vaultKey,te.encode(String(text||'')));
+  return 'enc1:'+b64(iv)+':'+b64(ct);
+}
+async function decVal(v){
+  if(!String(v).startsWith('enc1:')) return v;
+  const parts=v.split(':');
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(parts[1])},vaultKey,unb64(parts[2]));
+  return td.decode(pt);
+}
+const encList=arr=>Promise.all(arr.map(encVal));
+const decList=arr=>Promise.all(arr.map(decVal));
+async function setupVault(pass){
+  const salt=crypto.getRandomValues(new Uint8Array(16));
+  vaultKey=await deriveKey(pass,salt);
+  data.vault={salt:b64(salt),check:await encVal('ok')};
+  bankPlain={};
+  for(const s of data.stakeholders){
+    const plain={cards:s.cards||['',''],accounts:s.accounts||['',''],shebas:s.shebas||['','']};
+    s.l4={cards:plain.cards.map(v=>String(v).slice(-4)),accounts:plain.accounts.map(v=>String(v).slice(-4)),shebas:plain.shebas.map(v=>String(v).slice(-4))};
+    s.cards=await encList(plain.cards); s.accounts=await encList(plain.accounts); s.shebas=await encList(plain.shebas);
+    bankPlain[s.id]=plain;
+  }
+  save();
+}
+async function unlockVault(pass){
+  const key=await deriveKey(pass,unb64(data.vault.salt));
+  const prev=vaultKey; vaultKey=key;
+  try{ if(await decVal(data.vault.check)!=='ok'){ vaultKey=prev; return false } }
+  catch(e){ vaultKey=prev; return false }
+  await refreshBank(); return true;
+}
+async function refreshBank(){
+  if(!vaultKey) return; const m={};
+  for(const s of data.stakeholders){
+    try{ m[s.id]={cards:await decList(s.cards),accounts:await decList(s.accounts),shebas:await decList(s.shebas)} }
+    catch(e){ m[s.id]={cards:['',''],accounts:['',''],shebas:['','']} }
+  }
+  bankPlain=m;
+}
+function lockVault(){ vaultKey=null; bankPlain={}; stShown=new Set(); stAllShown=false; renderStake(); toast('بخش بانکی قفل شد') }
+function updateVaultBtn(){
+  const b=document.getElementById('vLockBtn'); if(!b) return;
+  b.textContent=vaultKey?'🔒 قفل بخش بانکی':(data.vault?'🔓 باز کردن قفل':'🔐 تعریف رمز');
+}
+function openVault(mode,cb){
+  vaultMode=mode; vaultCb=cb;
+  document.getElementById('vTitle').textContent=mode==='setup'?'تعریف رمز بخش بانکی':'باز کردن قفل بخش بانکی';
+  document.getElementById('vPass2Wrap').style.display=mode==='setup'?'':'none';
+  document.getElementById('vHint').textContent=mode==='setup'?'این رمز ذخیره نمی‌شود. اگر آن را فراموش کنید، شماره‌های بانکی قابل بازیابی نیستند.':'';
+  document.getElementById('vErr').textContent='';
+  document.getElementById('vPass').value=''; document.getElementById('vPass2').value='';
+  document.getElementById('vaultModal').classList.add('open');
+  setTimeout(()=>document.getElementById('vPass').focus(),50);
+}
+function closeVault(){ document.getElementById('vaultModal').classList.remove('open'); vaultCb=null }
+async function vaultOk(){
+  const p1=document.getElementById('vPass').value, p2=document.getElementById('vPass2').value;
+  const err=m=>{document.getElementById('vErr').textContent=m};
+  if(p1.length<8) return err('رمز باید حداقل ۸ نویسه باشد');
+  try{
+    if(vaultMode==='setup'){
+      if(p1!==p2) return err('رمزها یکسان نیستند');
+      await setupVault(p1);
+    }else{
+      if(!(await unlockVault(p1))) return err('رمز نادرست است');
+    }
+    const cb=vaultCb; closeVault(); renderStake(); if(cb) cb();
+  }catch(e){ err('خطا: '+(e.message||e)) }
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-action]'); if(!a) return;
+  const act=a.dataset.action;
+  if(act==='vOk') vaultOk();
+  else if(act==='vClose') closeVault();
+  else if(act==='vLock'){
+    if(vaultKey) lockVault();
+    else openVault(data.vault?'unlock':'setup',()=>renderStake());
+  }
+});
+document.addEventListener('visibilitychange',()=>{
+  clearTimeout(lockTimer);
+  if(document.hidden) lockTimer=setTimeout(()=>{ if(document.hidden && vaultKey) lockVault() },120000);
+});
+
+/* ===== مرحله ۳: پیوست‌ها (IndexedDB) و یادآوری‌های چندگانه ===== */
+let remDraft=[], attPending=[], idbHandle=null;
+const MAX_FILE=1.2*1024*1024, MAX_TASK=2*1024*1024;
+function idbOpen(){
+  if(idbHandle) return Promise.resolve(idbHandle);
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open('dash_files',2);
+    r.onupgradeneeded=()=>{ const db=r.result;
+      if(!db.objectStoreNames.contains('files')) db.createObjectStore('files');
+      if(!db.objectStoreNames.contains('snapshots')) db.createObjectStore('snapshots'); };
+    r.onsuccess=()=>{idbHandle=r.result; res(idbHandle)};
+    r.onerror=()=>rej(r.error);
+  });
+}
+async function idbRun(mode,fn,store='files'){
+  const db=await idbOpen();
+  return new Promise((res,rej)=>{
+    const tx=db.transaction(store,mode); const req=fn(tx.objectStore(store));
+    tx.oncomplete=()=>res(req?req.result:undefined); tx.onerror=()=>rej(tx.error);
+  });
+}
+const idbPut=(id,blob)=>idbRun('readwrite',s=>s.put(blob,id));
+const idbGet=id=>idbRun('readonly',s=>s.get(id));
+const idbDel=id=>idbRun('readwrite',s=>s.delete(id));
+function fmtSize(b){ return b<1024?b+' B':b<1048576?(b/1024).toFixed(0)+' KB':(b/1048576).toFixed(2)+' MB' }
+function curTask(){ return editTaskId?data.tasks.find(x=>x.id===editTaskId):null }
+function renderRemDraft(){
+  const el=document.getElementById('remList'); if(!el) return;
+  el.innerHTML=remDraft.length?remDraft.map((r,i)=>`<span class="chip-s">${esc(toJalaliStr(r))} <button class="x" type="button" data-action="delRem" data-i="${i}">×</button></span>`).join(''):'یادآوری اضافه‌ای ثبت نشده';
+}
+function renderAtt(t){
+  const el=document.getElementById('attList'); if(!el) return;
+  const saved=((t&&t.attachments)||[]).map(a=>`<div class="bank-row"><span class="num" style="direction:ltr">${esc(a.name)}</span><span class="muted">${fmtSize(a.size)}</span><button class="btn small ghost" type="button" data-action="openAtt" data-id="${a.id}">باز کردن</button><button class="btn small danger" type="button" data-action="delAtt" data-id="${a.id}">حذف</button></div>`);
+  const pend=attPending.map(a=>`<div class="bank-row"><span class="num" style="direction:ltr">${esc(a.name)}</span><span class="muted">${fmtSize(a.size)} · ذخیره نشده</span></div>`);
+  el.innerHTML=[...saved,...pend].join('')||'<span class="muted">پیوستی ثبت نشده</span>';
+}
+function addRem(){
+  const v=document.getElementById('fRemNew').value; if(!v){toast('تاریخ و ساعت را انتخاب کنید');return}
+  const iso=new Date(v).toISOString();
+  if(!remDraft.includes(iso)) remDraft.push(iso);
+  document.getElementById('fRemNew').value=''; renderRemDraft();
+}
+function addAtt(){
+  const inp=document.getElementById('fFile'); const file=inp.files&&inp.files[0];
+  if(!file){toast('فایلی انتخاب نشده');return}
+  if(file.size>MAX_FILE){toast('حجم هر فایل نباید بیشتر از ۱٫۲ مگابایت باشد');return}
+  const t=curTask();
+  const used=((t&&t.attachments)||[]).reduce((s,a)=>s+a.size,0)+attPending.reduce((s,a)=>s+a.size,0);
+  if(used+file.size>MAX_TASK){toast('مجموع پیوست‌های این کار نباید بیشتر از ۲ مگابایت باشد');return}
+  attPending.push({id:uid(),name:file.name,type:file.type||'application/octet-stream',size:file.size,uploadedAt:nowISO(),blob:file});
+  inp.value=''; renderAtt(t);
+}
+async function openAtt(id){
+  const t=curTask(); const meta=t&&(t.attachments||[]).find(a=>a.id===id); if(!meta) return;
+  const blob=await idbGet(id); if(!blob){toast('فایل روی این دستگاه پیدا نشد');return}
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url; a.download=meta.name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
+}
+async function delAtt(id){
+  const t=curTask(); if(!t||!confirm('پیوست حذف شود؟')) return;
+  t.attachments=(t.attachments||[]).filter(a=>a.id!==id);
+  await idbDel(id); save(); renderAtt(t); toast('پیوست حذف شد');
+}
+const _openTaskModal=openTaskModal;
+openTaskModal=function(...args){
+  _openTaskModal.apply(this,args);
+  const t=curTask();
+  remDraft=t?(t.reminders||[]).slice():[];
+  attPending=[];
+  renderRemDraft(); renderAtt(t);
+};
+const _saveTask=saveTask;
+saveTask=async function(){
+  if(!fTitle.value.trim()) return _saveTask();
+  const before=new Set(data.tasks.map(t=>t.id)); const editing=editTaskId;
+  _saveTask();
+  const id=editing||((data.tasks.find(t=>!before.has(t.id))||{}).id);
+  const t=data.tasks.find(x=>x.id===id); if(!t) return;
+  t.reminders=remDraft.slice();
+  t.attachments=t.attachments||[];
+  for(const a of attPending){
+    await idbPut(a.id,a.blob);
+    t.attachments.push({id:a.id,name:a.name,type:a.type,size:a.size,uploadedAt:a.uploadedAt});
+  }
+  attPending=[];
+  save();
+};
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-action]'); if(!a) return;
+  switch(a.dataset.action){
+    case 'addRem': addRem(); break;
+    case 'delRem': remDraft.splice(+a.dataset.i,1); renderRemDraft(); break;
+    case 'addAtt': addAtt(); break;
+    case 'openAtt': openAtt(a.dataset.id); break;
+    case 'delAtt': delAtt(a.dataset.id); break;
+  }
+});
+
+/* ===== یادآوری از طریق Google Calendar ===== */
+let gcalToken=null, gcalExp=0;
+const GCAL_SCOPE='https://www.googleapis.com/auth/calendar.events';
+function gcalCfg(){ try{return JSON.parse(localStorage.getItem('dash_gcal_cfg')||'{}')}catch(e){return {}} }
+function gcalStatus(msg){ const el=document.getElementById('gcStatus'); if(el) el.textContent=msg }
+function gcalConnect(){
+  return new Promise((res,rej)=>{
+    const cfg=gcalCfg();
+    if(!cfg.clientId) return rej(new Error('Client ID تنظیم نشده است'));
+    if(!window.google||!google.accounts) return rej(new Error('کتابخانه Google بارگذاری نشد (اینترنت را بررسی کنید)'));
+    const client=google.accounts.oauth2.initTokenClient({client_id:cfg.clientId,scope:GCAL_SCOPE,callback:r=>{
+      if(r.error) return rej(new Error(r.error));
+      gcalToken=r.access_token; gcalExp=Date.now()+((r.expires_in||3600)-60)*1000; res(gcalToken);
+    }});
+    client.requestAccessToken({prompt:''});
+  });
+}
+function gcalReady(){ return !!gcalToken && Date.now()<gcalExp }
+async function gcalApi(method,path,body){
+  if(!gcalReady()) throw new Error('need-auth');
+  const cal=encodeURIComponent(gcalCfg().calendarId||'primary');
+  const r=await fetch('https://www.googleapis.com/calendar/v3/calendars/'+cal+path,{method,
+    headers:{Authorization:'Bearer '+gcalToken,'Content-Type':'application/json'},
+    body:body?JSON.stringify(body):undefined});
+  if(r.status===401){ gcalToken=null; throw new Error('need-auth') }
+  if(r.status===404||r.status===410) return null;
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return r.status===204?null:r.json();
+}
+function gcalWanted(t){
+  const out={};
+  if(t.status==='خاتمه یافته') return out;
+  const now=Date.now();
+  taskReminders(t).forEach(r=>{ if(new Date(r).getTime()>now) out['r:'+r]={start:r,summary:'یادآوری: '+t.title} });
+  return out;
+}
+async function gcalSyncTask(t){
+  t.calEv=t.calEv||{};
+  const want=gcalWanted(t), now=Date.now();
+  for(const k of Object.keys(t.calEv)){
+    const ev=t.calEv[k], past=new Date(ev.start).getTime()<=now;
+    const stale=!want[k]?!past:(want[k].summary!==ev.summary);
+    if(stale){ await gcalApi('DELETE','/events/'+ev.id); delete t.calEv[k]; }
+  }
+  for(const k of Object.keys(want)){
+    if(t.calEv[k]) continue;
+    const w=want[k], start=new Date(w.start), end=new Date(start.getTime()+15*60000);
+    const ev=await gcalApi('POST','/events',{summary:w.summary,description:'از داشبورد شخصی',
+      start:{dateTime:start.toISOString()},end:{dateTime:end.toISOString()},
+      reminders:{useDefault:false,overrides:[{method:'popup',minutes:0}]}});
+    if(ev&&ev.id) t.calEv[k]={id:ev.id,summary:w.summary,start:w.start};
+  }
+}
+async function gcalSyncAll(){
+  if(!gcalReady()) throw new Error('need-auth');
+  for(const t of data.tasks){
+    try{ await gcalSyncTask(t) }catch(e){ if(e.message==='need-auth') throw e; console.error('gcal',t.id,e) }
+  }
+  save();
+}
+function gcalAutoSync(){
+  if(!gcalReady()||!gcalCfg().clientId) return;
+  gcalSyncAll().catch(e=>{ if(e.message==='need-auth') gcalStatus('اتصال منقضی شد؛ دوباره «اتصال به Google» را بزنید') });
+}
+/* ترکیب با مرحله ۳: پس از ذخیره کار، همگام‌سازی؛ و هنگام حذف، پاک‌کردن رویدادها */
+const _saveTask3=saveTask;
+saveTask=async function(){ await _saveTask3(); gcalAutoSync(); };
+const _delTaskGcal=delTask;
+delTask=function(){
+  const t=curTask();
+  if(t&&t.calEv&&gcalReady()) Object.values(t.calEv).forEach(ev=>gcalApi('DELETE','/events/'+ev.id).catch(()=>{}));
+  _delTaskGcal();
+};
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-action]'); if(!a) return;
+  switch(a.dataset.action){
+    case 'gcSave': { const id=document.getElementById('gcId').value.trim(); localStorage.setItem('dash_gcal_cfg',JSON.stringify(Object.assign(gcalCfg(),{clientId:id,calendarId:'primary'}))); gcalStatus('Client ID ذخیره شد'); toast('ذخیره شد'); break }
+    case 'gcConnect': gcalConnect().then(()=>gcalStatus('به Google Calendar متصل شد')).catch(err=>{ gcalStatus('خطا: '+err.message); toast(err.message) }); break;
+    case 'gcSyncNow': gcalSyncAll().then(()=>{ gcalStatus('همگام‌سازی انجام شد'); toast('یادآوری‌ها همگام شدند') }).catch(err=>{ gcalStatus(err.message==='need-auth'?'ابتدا «اتصال به Google» را بزنید':'خطا: '+err.message) }); break;
+  }
+});
+document.addEventListener('DOMContentLoaded',()=>{ const c=gcalCfg(); const el=document.getElementById('gcId'); if(el&&c.clientId) el.value=c.clientId; });
+
+/* ===== مرحله ۴: گزارش و تحلیل عملکرد ===== */
+const DAY=864e5;
+function taskDoneAt(t){
+  const h=(t.history||[]).filter(x=>/وضعیت.*خاتمه یافته/.test(x.text||''));
+  if(h.length) return new Date(h[h.length-1].at).getTime();
+  if(t.status==='خاتمه یافته') return new Date(t.updatedAt||t.createdAt).getTime();
+  return null;
+}
+function rpData(days){
+  const end=Date.now(), start=end-days*DAY, pstart=start-days*DAY;
+  const inR=(ts,a,b)=>ts!=null && ts>=a && ts<b;
+  const tasks=data.tasks;
+  const done=tasks.map(t=>({t,at:taskDoneAt(t)})).filter(x=>x.at!=null);
+  const doneNow=done.filter(x=>inR(x.at,start,end));
+  const donePrev=done.filter(x=>inR(x.at,pstart,start));
+  const created=tasks.filter(t=>inR(new Date(t.createdAt).getTime(),start,end)).length;
+  const open=tasks.filter(t=>t.status!=='خاتمه یافته');
+  const overdue=open.filter(t=>t.due && new Date(t.due).getTime()<end);
+  const withDue=doneNow.filter(x=>x.t.due);
+  const onTime=withDue.filter(x=>x.at<=new Date(x.t.due).getTime()).length;
+  const avgDays=doneNow.length?doneNow.reduce((s,x)=>s+(x.at-new Date(x.t.createdAt).getTime()),0)/doneNow.length/DAY:null;
+  const cats={};
+  const cat=c=>cats[c||'سایر']=cats[c||'سایر']||{open:0,done:0};
+  open.forEach(t=>cat(t.cat1).open++);
+  doneNow.forEach(x=>cat(x.t.cat1).done++);
+  const owners={}; const own=o=>{const k=o||'بدون مسئول'; owners[k]=owners[k]||{open:0,done:0}; return owners[k]};
+  open.forEach(t=>own(t.owner).open++);
+  doneNow.forEach(x=>own(x.t.owner).done++);
+  const perDay={};
+  doneNow.forEach(x=>{ const k=Math.floor((x.at-start)/DAY); perDay[k]=(perDay[k]||0)+1 });
+  return {days,doneNow,donePrev,created,open,overdue,withDue,onTime,avgDays,cats,perDay,owners};
+}
+function renderReport(){
+  const el=document.getElementById('rpBody'); if(!el) return;
+  const days=+document.getElementById('rpRange').value||30;
+  const r=rpData(days);
+  const pct=(a,b)=>b?Math.round(a*100/b)+'٪':'—';
+  const change=r.donePrev.length?Math.round((r.doneNow.length-r.donePrev.length)*100/r.donePrev.length)+'٪':(r.doneNow.length?'بدون دوره قبل':'—');
+  const kpi=(label,val)=>`<div class="stake-card" style="text-align:center"><div class="muted" style="font-size:.78rem">${label}</div><div style="font-size:1.4rem;font-weight:700;margin-top:4px">${val}</div></div>`;
+  const bars=[]; for(let i=0;i<days;i++) bars.push(r.perDay[i]||0);
+  const max=Math.max(1,...bars);
+  const bar=`<div style="display:flex;align-items:flex-end;gap:2px;height:90px;margin:8px 0">${bars.map((n,i)=>`<div title="${fa(n)} کار" style="flex:1;min-width:2px;background:var(--teal);height:${Math.max(n?8:2,Math.round(n*90/max))}px;opacity:${n?1:.25};border-radius:2px"></div>`).join('')}</div>`;
+  const catRows=Object.entries(r.cats).sort((a,b)=>(b[1].open+b[1].done)-(a[1].open+a[1].done)).map(([c,v])=>`<tr><td>${esc(c)}</td><td>${fa(v.done)}</td><td>${fa(v.open)}</td></tr>`).join('')||'<tr><td colspan="3" class="muted">داده‌ای نیست</td></tr>';
+  const overdueRows=r.overdue.slice(0,10).map(t=>`<tr><td>${esc(t.title)}</td><td>${esc(toJalaliStr(t.due).split(' · ')[0])}</td><td>${esc(t.status)}</td></tr>`).join('')||'<tr><td colspan="3" class="muted">کار عقب‌افتاده‌ای نیست</td></tr>';
+  el.innerHTML=`
+    <div class="stake-grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
+      ${kpi('انجام‌شده در بازه',fa(r.doneNow.length))}
+      ${kpi('تغییر نسبت به دوره قبل',change)}
+      ${kpi('ایجادشده در بازه',fa(r.created))}
+      ${kpi('کارهای باز',fa(r.open.length))}
+      ${kpi('عقب‌افتاده',fa(r.overdue.length))}
+      ${kpi('انجام به‌موقع',pct(r.onTime,r.withDue.length))}
+      ${kpi('میانگین زمان انجام',r.avgDays==null?'—':fa(r.avgDays.toFixed(1))+' روز')}
+    </div>
+    <h4 class="muted" style="margin:14px 0 2px">روند کارهای انجام‌شده روزانه</h4>${bar}
+    <h4 class="muted" style="margin:14px 0 4px">عملکرد مسئولان</h4>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>مسئول</th><th>انجام‌شده</th><th>باز</th></tr></thead><tbody>${Object.entries(r.owners).map(([o,v])=>`<tr><td>${esc(o)}</td><td>${fa(v.done)}</td><td>${fa(v.open)}</td></tr>`).join('')||'<tr><td colspan="3" class="muted">داده‌ای نیست</td></tr>'}</tbody></table></div>
+    <h4 class="muted" style="margin:14px 0 4px">توزیع بر اساس دسته‌بندی</h4>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>دسته</th><th>انجام‌شده</th><th>باز</th></tr></thead><tbody>${catRows}</tbody></table></div>
+    <h4 class="muted" style="margin:14px 0 4px">کارهای عقب‌افتاده (حداکثر ۱۰ مورد)</h4>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>عنوان</th><th>مهلت</th><th>وضعیت</th></tr></thead><tbody>${overdueRows}</tbody></table></div>`;
+}
+function rpCsv(days){
+  const r=rpData(days);
+  const q=s=>'"'+String(s==null?'':s).replace(/"/g,'""')+'"';
+  const rows=[['نوع','عنوان','مسئول','دسته','وضعیت','مهلت','تاریخ انجام / ایجاد']];
+  r.doneNow.forEach(x=>rows.push(['انجام‌شده',x.t.title,x.t.owner||'',x.t.cat1,x.t.status,x.t.due?toJalaliStr(x.t.due):'',toJalaliStr(new Date(x.at).toISOString())]));
+  r.overdue.forEach(t=>rows.push(['عقب‌افتاده',t.title,t.owner||'',t.cat1,t.status,t.due?toJalaliStr(t.due):'','']));
+  return '\uFEFF'+rows.map(row=>row.map(q).join(',')).join('\n');
+}
+function rpExportCSV(){
+  const days=+document.getElementById('rpRange').value||30;
+  const blob=new Blob([rpCsv(days)],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url; a.download='گزارش_'+days+'_روز_'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+document.addEventListener('click',e=>{ const a=e.target.closest('[data-action="rpCsv"]'); if(a) rpExportCSV(); });
+
+/* ===== مرحله ۵: مسئول، کانبان و ذخیره ترتیب ===== */
+function fillOwnerList(){
+  const list=[...new Set(data.tasks.map(t=>(t.owner||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fa'));
+  document.getElementById('ownerList').innerHTML=list.map(o=>`<option value="${esc(o)}"></option>`).join('');
+}
+const _openTaskModal5=openTaskModal;
+openTaskModal=function(...a){
+  _openTaskModal5.apply(this,a);
+  const t=curTask();
+  document.getElementById('fOwner').value=t?(t.owner||''):'';
+  fillOwnerList();
+};
+const _saveTask5=saveTask;
+saveTask=async function(){
+  if(!fTitle.value.trim()) return _saveTask5();
+  const before=new Set(data.tasks.map(t=>t.id)); const editing=editTaskId;
+  const owner=document.getElementById('fOwner').value.trim();
+  await _saveTask5();
+  const id=editing||((data.tasks.find(t=>!before.has(t.id))||{}).id);
+  const t=data.tasks.find(x=>x.id===id);
+  if(t){ t.owner=owner; save(); }
+};
+let kanbanMode=false;
+let extraMode=null;
+function setMode(m){
+  kanbanMode=(m==='kan');
+  extraMode=m==='arch'?'archive':(m==='trash'?'trash':null);
+  document.getElementById('taskList').style.display=(m==='list')?'':'none';
+  document.getElementById('kanbanBox').style.display=(m==='kan')?'':'none';
+  document.getElementById('extraBox').style.display=extraMode?'':'none';
+  const cls={list:'vwList',kan:'vwKan',arch:'vwArch',trash:'vwTrash'};
+  Object.entries(cls).forEach(([k,id])=>{ document.getElementById(id).className='btn small'+(k===m?'':' ghost') });
+  renderKanbanIfOn(); renderExtra();
+}
+function setView(kan){ setMode(kan?'kan':'list') }
+function renderKanbanIfOn(){ if(kanbanMode) renderKanban() }
+function kanCard(t){
+  const i=STATUSES.indexOf(t.status);
+  return `<div class="kan-card" draggable="true" data-id="${esc(t.id)}">
+    <div class="kan-t">${esc(t.title)}</div>
+    <div class="muted kan-m">${t.owner?'👤 '+esc(t.owner)+' · ':''}${esc(t.priority||'')}${t.due?' · '+esc(toJalaliStr(t.due).split(' · ')[0]):''}</div>
+    ${(t.subtasks||[]).length?`<div class="muted kan-m">زیرکار: ${fa((t.subtasks||[]).filter(s=>s.done).length)}/${fa(t.subtasks.length)}</div>`:""}<div class="kan-bar"><i style="width:${+t.progress||0}%"></i></div>
+    <div class="row kan-mv">
+      <button class="btn small ghost" type="button" data-action="kanMove" data-id="${esc(t.id)}" data-dir="-1" ${i<=0?'disabled':''}>◀</button>
+      <button class="btn small ghost" type="button" data-action="kanMove" data-id="${esc(t.id)}" data-dir="1" ${i>=STATUSES.length-1?'disabled':''}>▶</button>
+    </div></div>`;
+}
+function renderKanban(){
+  const box=document.getElementById('kanbanBox'); if(!box) return;
+  box.innerHTML='<div class="kan-wrap">'+STATUSES.map(s=>{
+    const items=data.tasks.filter(t=>t.status===s).sort((a,b)=>(a.kOrder??1e9)-(b.kOrder??1e9));
+    return `<div class="kan-col"><div class="kan-h">${esc(s)} <span class="muted">(${fa(items.length)})</span></div>
+      <div class="kan-drop" data-status="${esc(s)}">${items.map(kanCard).join('')||'<div class="muted kan-empty">کاری نیست</div>'}</div></div>`;
+  }).join('')+'</div>';
+  bindKanban();
+}
+function kanSetStatus(id,status,index){
+  const t=data.tasks.find(x=>x.id===id); if(!t) return;
+  if(t.status!==status){
+    t.history=t.history||[];
+    t.history.push({at:nowISO(),by:data.settings.name||'کاربر',text:'وضعیت → '+status});
+    t.status=status; t.updatedAt=nowISO();
+  }
+  const col=data.tasks.filter(x=>x.status===status&&x.id!==id).sort((a,b)=>(a.kOrder??1e9)-(b.kOrder??1e9));
+  col.splice(index==null?col.length:Math.max(0,Math.min(index,col.length)),0,t);
+  col.forEach((x,i)=>x.kOrder=i);
+  save(); renderKanban(); renderTasks();
+}
+function bindKanban(){
+  const box=document.getElementById('kanbanBox');
+  box.querySelectorAll('.kan-card').forEach(c=>{
+    c.addEventListener('dragstart',e=>{ e.dataTransfer.setData('text/plain',c.dataset.id); c.classList.add('dragging') });
+    c.addEventListener('dragend',()=>c.classList.remove('dragging'));
+  });
+  box.querySelectorAll('.kan-drop').forEach(d=>{
+    d.addEventListener('dragover',e=>{ e.preventDefault(); d.classList.add('over') });
+    d.addEventListener('dragleave',()=>d.classList.remove('over'));
+    d.addEventListener('drop',e=>{
+      e.preventDefault(); d.classList.remove('over');
+      const id=e.dataTransfer.getData('text/plain'); if(!id) return;
+      const cards=[...d.querySelectorAll('.kan-card:not(.dragging)')];
+      let idx=cards.length;
+      for(let i=0;i<cards.length;i++){ const r=cards[i].getBoundingClientRect(); if(e.clientY<r.top+r.height/2){ idx=i; break } }
+      kanSetStatus(id,d.dataset.status,idx);
+    });
+  });
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-action]'); if(!a) return;
+  switch(a.dataset.action){
+    case 'viewList': setView(false); break;
+    case 'viewKan': setView(true); break;
+    case 'kanMove': { const i=STATUSES.indexOf((data.tasks.find(x=>x.id===a.dataset.id)||{}).status); const n=i+(+a.dataset.dir); if(n>=0&&n<STATUSES.length) kanSetStatus(a.dataset.id,STATUSES[n]); break }
+  }
+});
+
+/* ===== مرحله ۶ (همگام‌سازی): ادغام در سطح هر رکورد + نشانه حذف ===== */
+var TABLES=['tasks','contacts','stakeholders','archive','trash','templates','personal','notes','focus'];
+var syncSnap=(()=>{try{return JSON.parse(localStorage.getItem('dash_sync_snap')||'null')}catch(e){return null}})();
+function hashStr(s){ let h=5381; for(let i=0;i<s.length;i++) h=((h<<5)+h+s.charCodeAt(i))|0; return h.toString(36) }
+function recHashes(){
+  const out={};
+  TABLES.forEach(tb=>{ out[tb]={}; (data[tb]||[]).forEach(r=>{ const {updatedAt,...rest}=r; out[tb][r.id]=hashStr(JSON.stringify(rest)) }) });
+  return out;
+}
+function setSnapshot(){ syncSnap=recHashes(); localStorage.setItem('dash_sync_snap',JSON.stringify(syncSnap)) }
+function trackChanges(){
+  data.deleted=data.deleted||{};
+  if(!syncSnap){
+    // رکوردهای قدیمی بدون زمان: قدیمی‌ترین زمان ممکن تا هر نسخه ابری جدیدتر برنده شود
+    TABLES.forEach(tb=>(data[tb]||[]).forEach(r=>{ if(!r.updatedAt) r.updatedAt='1970-01-01T00:00:00.000Z' }));
+    setSnapshot();
+  }
+  const now=nowISO(), cur=recHashes();
+  TABLES.forEach(tb=>{
+    const prev=syncSnap[tb]||{};
+    (data[tb]||[]).forEach(r=>{ if(prev[r.id]!==cur[tb][r.id]) r.updatedAt=now });
+    for(const id in prev) if(!(id in cur[tb])) data.deleted[tb+':'+id]=now;
+  });
+  setSnapshot();
+}
+// ادغام دو وضعیت: هر رکورد با زمان به‌روزرسانی جدیدتر برنده است؛ حذف‌ها با نشانه حذف جدیدتر از زمان رکورد اعمال می‌شوند
+// settingsFrom: 'B' یعنی تنظیمات طرف B (نسخه‌ای که در حال اعمال است) برنده شود
+function mergeStates(A,B,settingsFrom){
+  const arr=x=>Array.isArray(x)?x:(x?Object.values(x):[]);
+  const out={tasks:[],contacts:[],stakeholders:[],archive:[],trash:[],templates:[],personal:[],notes:[],focus:[],deleted:{},
+    settings:settingsFrom==='B'?Object.assign({},A.settings||{},B.settings||{}):Object.assign({},B.settings||{},A.settings||{}),
+    vault:B.vault||A.vault||null};
+  [A.deleted||{},B.deleted||{}].forEach(src=>{ for(const k in src) if(!out.deleted[k]||src[k]>out.deleted[k]) out.deleted[k]=src[k] });
+  TABLES.forEach(tb=>{
+    const map=new Map();
+    [...arr(A[tb]),...arr(B[tb])].forEach(r=>{
+      if(!r||r.id==null) return;
+      const cur=map.get(r.id);
+      if(!cur||(r.updatedAt||'')>(cur.updatedAt||'')) map.set(r.id,r);
+    });
+    for(const [id,r] of map){
+      const tomb=out.deleted[tb+':'+id];
+      if(tomb && tomb>=(r.updatedAt||'')) continue;
+      out[tb].push(r);
+    }
+  });
+  return out;
+}
+
+/* ===== فاز ۱: بک‌آپ کامل، اعتبارسنجی، بازیابی امن و بازگشت ===== */
+const BK_FORMAT='dash-personal-backup';
+function hasPlainBank(){
+  return (data.stakeholders||[]).some(s=>[...(s.cards||[]),...(s.accounts||[]),...(s.shebas||[])].some(v=>v && !String(v).startsWith('enc1:')));
+}
+async function blobToDataURL(blob){
+  const type=blob.type||'application/octet-stream';
+  const bytes=new Uint8Array(await blob.arrayBuffer());
+  let s=''; for(let i=0;i<bytes.length;i+=0x8000) s+=String.fromCharCode(...bytes.subarray(i,i+0x8000));
+  return 'data:'+type+';base64,'+btoa(s);
+}
+async function buildBackup(){
+  const atts=[], missing=[];
+  for(const t of data.tasks) for(const m of (t.attachments||[])){
+    const blob=await idbGet(m.id);
+    if(!blob){ missing.push(m.name); continue }
+    atts.push({id:m.id,name:m.name,type:m.type,size:m.size,b64:await blobToDataURL(blob)});
+  }
+  return {
+    format:BK_FORMAT, formatVersion:1, appSchema:16, createdAt:nowISO(),
+    counts:{tasks:data.tasks.length,contacts:data.contacts.length,stakeholders:data.stakeholders.length,attachments:atts.length},
+    missingAttachments:missing,
+    data:{tasks:data.tasks,contacts:data.contacts,stakeholders:data.stakeholders,archive:data.archive||[],trash:data.trash||[],templates:data.templates||[],personal:data.personal||[],notes:data.notes||[],focus:data.focus||[],settings:data.settings,deleted:data.deleted||{},vault:data.vault||null},
+    attachments:atts
+  };
+}
+async function exportFullBackup(){
+  if(hasPlainBank() && !confirm('بک‌آپ شامل شماره‌های بانکی متن ساده است (رمز بخش بانکی هنوز تعریف نشده). ادامه می‌دهید؟')) return;
+  toast('در حال تهیه بک‌آپ…');
+  try{
+    const obj=await buildBackup();
+    const blob=new Blob([JSON.stringify(obj)],{type:'application/json'});
+    const url=URL.createObjectURL(blob); const a=document.createElement('a');
+    a.href=url; a.download='dashboard-backup-'+new Date().toISOString().slice(0,10)+'.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),10000);
+    toast('بک‌آپ ساخته شد'+(obj.missingAttachments.length?' — '+fa(obj.missingAttachments.length)+' پیوست روی این دستگاه نبود':''));
+  }catch(e){ console.error(e); toast('ساخت بک‌آپ ناموفق بود') }
+}
+function validateBackup(raw){
+  const errors=[], warnings=[];
+  if(!raw||typeof raw!=='object') return {ok:false,errors:['ساختار فایل نامعتبر است']};
+  let d, atts=[];
+  if(raw.format===BK_FORMAT){
+    if(raw.formatVersion!==1) return {ok:false,errors:['نسخه فرمت بک‌آپ ('+raw.formatVersion+') پشتیبانی نمی‌شود']};
+    d=raw.data; atts=Array.isArray(raw.attachments)?raw.attachments:[];
+    if(!d||typeof d!=='object') return {ok:false,errors:['بخش داده در فایل وجود ندارد']};
+  }else if(Array.isArray(raw.tasks)){
+    d=Array.isArray(raw.history)?normalizeImport(raw):raw;   // فرمت‌های قدیمی
+    if(!d) return {ok:false,errors:['فرمت قدیمی قابل خواندن نیست']};
+  }else return {ok:false,errors:['فرمت فایل شناخته‌شده نیست']};
+  const tasks=Array.isArray(d.tasks)?d.tasks:null;
+  const contacts=Array.isArray(d.contacts)?d.contacts:[];
+  const stakeholders=Array.isArray(d.stakeholders)?d.stakeholders:[];
+  if(!tasks) errors.push('فهرست کارها وجود ندارد');
+  const check=(list,name)=>{
+    const seen=new Set();
+    list.forEach((r,i)=>{
+      if(!r||typeof r!=='object'||typeof r.id!=='string'||!r.id) errors.push(name+' '+(i+1)+': شناسه ندارد');
+      else if(seen.has(r.id)) errors.push(name+': شناسه تکراری');
+      else seen.add(r.id);
+    });
+  };
+  if(tasks){ check(tasks,'کار'); tasks.forEach(t=>{ if(t&&typeof t.title!=='string') errors.push('یک کار عنوان معتبر ندارد') }) }
+  check(contacts,'مخاطب'); check(stakeholders,'ذی‌نفع');
+  check(Array.isArray(d.personal)?d.personal:[],'یادآوری'); check(Array.isArray(d.notes)?d.notes:[],'یادداشت'); check(Array.isArray(d.focus)?d.focus:[],'تمرکز'); check(Array.isArray(d.archive)?d.archive:[],'بایگانی'); check(Array.isArray(d.trash)?d.trash:[],'زباله'); check(Array.isArray(d.templates)?d.templates:[],'قالب');
+  const attIds=new Set();
+  atts.forEach(a=>{
+    if(!a||typeof a.id!=='string'||typeof a.b64!=='string'||!a.b64.startsWith('data:')) errors.push('پیوست نامعتبر: '+((a&&a.name)||'?'));
+    else if(+a.size>MAX_FILE) errors.push('پیوست بزرگ‌تر از حد مجاز است: '+a.name);
+    else attIds.add(a.id);
+  });
+  (tasks||[]).forEach(t=>(t.attachments||[]).forEach(m=>{ if(!attIds.has(m.id)) warnings.push('پیوست «'+m.name+'» در بک‌آپ نیست') }));
+  const normalized={
+    tasks:tasks||[], contacts, stakeholders,
+    archive:Array.isArray(d.archive)?d.archive:[], trash:Array.isArray(d.trash)?d.trash:[], templates:Array.isArray(d.templates)?d.templates:[], personal:Array.isArray(d.personal)?d.personal:[], notes:Array.isArray(d.notes)?d.notes:[], focus:Array.isArray(d.focus)?d.focus:[],
+    settings:(d.settings&&typeof d.settings==='object')?d.settings:{name:'کاربر',prices:{}},
+    deleted:(d.deleted&&typeof d.deleted==='object')?d.deleted:{},
+    vault:d.vault||null
+  };
+  return {ok:!errors.length, errors, warnings, data:normalized, attachments:atts,
+    counts:{tasks:normalized.tasks.length,contacts:contacts.length,stakeholders:stakeholders.length,attachments:atts.length}};
+}
+async function savePreRestoreSnapshot(){
+  const id='pre-restore-'+Date.now();
+  await idbRun('readwrite',s=>s.put(JSON.stringify(data),id),'snapshots');
+  const keys=((await idbRun('readonly',s=>s.getAllKeys(),'snapshots'))||[]).sort();
+  for(const k of keys.slice(0,-5)) await idbRun('readwrite',s=>s.delete(k),'snapshots');
+}
+// اعمال یک وضعیت داده بدون ایجاد نشانه حذف یا زمان تغییر جعلی
+function applyRestoredData(next){
+  const prev=data;
+  try{ data=JSON.parse(JSON.stringify(next)); migrate(); }
+  catch(e){ data=prev; throw e }
+  setSnapshot(); save(); render();
+}
+async function importBackupText(text){
+  let raw;
+  try{ raw=JSON.parse(text) }catch(e){ toast('فایل JSON معتبر نیست'); return }
+  const v=validateBackup(raw);
+  if(!v.ok){ toast('بازیابی لغو شد: '+v.errors[0]); console.warn(v.errors); return }
+  const c=v.counts;
+  const note=v.warnings.length?'\n\nهشدار: '+fa(v.warnings.length)+' پیوست در فایل نیست و بازیابی نمی‌شود.':'';
+  if(!confirm('بازیابی انجام شود؟\n\n'+fa(c.tasks)+' کار، '+fa(c.contacts)+' مخاطب، '+fa(c.stakeholders)+' ذی‌نفع، '+fa(c.attachments)+' پیوست.\n\nداده فعلی قبل از بازیابی در پشتیبان داخلی ذخیره می‌شود.'+note)) return;
+  try{
+    await savePreRestoreSnapshot();
+    for(const a of v.attachments){
+      const bin=atob(a.b64.split(',')[1]);
+      const bytes=Uint8Array.from(bin,ch=>ch.charCodeAt(0));
+      await idbPut(a.id,new Blob([bytes],{type:a.type||'application/octet-stream'}));
+    }
+    applyRestoredData(v.data);
+    toast('بازیابی انجام شد');
+  }catch(e){ console.error(e); toast('بازیابی ناموفق؛ داده قبلی حفظ شد') }
+}
+async function restorePreRestore(){
+  const keys=((await idbRun('readonly',s=>s.getAllKeys(),'snapshots'))||[]).sort();
+  const last=keys[keys.length-1];
+  if(!last){ toast('نسخه داخلی برای بازگشت وجود ندارد'); return }
+  if(!confirm('داده فعلی با آخرین نسخه قبل از بازیابی جایگزین شود؟')) return;
+  try{
+    const txt=await idbRun('readonly',s=>s.get(last),'snapshots');
+    const v=validateBackup(JSON.parse(txt));
+    if(!v.ok) throw new Error(v.errors[0]);
+    applyRestoredData(v.data);
+    toast('نسخه قبلی برگردانده شد');
+  }catch(e){ console.error(e); toast('بازگشت ناموفق بود') }
+}
+function cleanLegacyBackup(){
+  if(!localStorage.getItem('dash_backup_pre_v16')){ toast('نسخه قدیمی وجود ندارد'); return }
+  if(!data.vault || hasPlainBank()){ toast('ابتدا رمز بخش بانکی را تعریف کنید تا شماره‌ها رمزشده باشند'); return }
+  if(!confirm('نسخه قدیمی متن‌ساده حذف شود؟ این کار قابل بازگشت نیست.')) return;
+  localStorage.removeItem('dash_backup_pre_v16'); toast('نسخه قدیمی حذف شد');
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-action]'); if(!a) return;
+  if(a.dataset.action==='restorePre') restorePreRestore();
+  if(a.dataset.action==='cleanLegacy') cleanLegacyBackup();
+});
+
+/* ===== فاز ۲: زیرکار، بایگانی/زباله، قالب، کپی، افزودن سریع، جستجوی سراسری ===== */
+let subDraft=[];
+function calcProgress(t){
+  const s=t.subtasks||[];
+  if(!s.length || t.autoProgress===false) return +t.progress||0;
+  return Math.round(s.filter(x=>x.done).length*100/s.length);
+}
+function renderSubDraft(){
+  const el=document.getElementById('subList'); if(!el) return;
+  const pct=subDraft.length?Math.round(subDraft.filter(s=>s.done).length*100/subDraft.length):0;
+  el.innerHTML=(subDraft.length?subDraft.map((s,i)=>`<div class="bank-row"><label style="display:flex;gap:.4rem;align-items:center;flex:1;cursor:pointer;min-width:0"><input type="checkbox" data-action="subToggle" data-i="${i}" ${s.done?'checked':''} style="width:auto"> <span style="${s.done?'text-decoration:line-through;opacity:.7':''}">${esc(s.title)}</span>
+      <span class="muted" style="font-size:.76rem">${[s.owner?'👤 '+esc(s.owner):'',s.priority&&s.priority!=='عادی'?esc(s.priority):'',s.due?'⏰ '+esc(toJalaliStr(s.due).split(' · ')[0]):'',s.note?'📝 '+esc(s.note):''].filter(Boolean).join(' · ')}</span></label><button class="btn small danger" type="button" data-action="subDel" data-i="${i}">×</button></div>`).join(''):'<span class="muted">زیرکاری ثبت نشده</span>')
+    +`<div class="muted" style="margin-top:4px">پیشرفت زیرکارها: ${fa(pct)}٪</div>`;
+}
+function addSub(){
+  const v=document.getElementById('subNew').value.trim();
+  if(!v){ toast('عنوان زیرکار را بنویسید'); return }
+  const dueV=document.getElementById('subDue').value;
+  subDraft.push({id:uid(),title:v,done:false,
+    owner:document.getElementById('subOwner').value.trim(),
+    priority:document.getElementById('subPri').value,
+    due:dueV?new Date(dueV).toISOString():'',
+    note:document.getElementById('subNote').value.trim()});
+  ['subNew','subOwner','subNote'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('subDue').value=''; renderSubDraft();
+}
+const _openTaskModalP2=openTaskModal;
+openTaskModal=function(...a){
+  _openTaskModalP2.apply(this,a);
+  const t=curTask();
+  subDraft=t?(t.subtasks||[]).map(s=>Object.assign({},s)):[];
+  document.getElementById('autoProg').checked=!(t&&t.autoProgress===false);
+  renderSubDraft();
+};
+const _saveTaskP2=saveTask;
+saveTask=async function(){
+  if(!fTitle.value.trim()) return _saveTaskP2();
+  const before=new Set(data.tasks.map(t=>t.id)); const editing=editTaskId;
+  await _saveTaskP2();
+  const id=editing||((data.tasks.find(t=>!before.has(t.id))||{}).id);
+  const t=data.tasks.find(x=>x.id===id);
+  if(t){
+    t.subtasks=subDraft.map(s=>Object.assign({},s));
+    t.autoProgress=document.getElementById('autoProg').checked;
+    t.progress=calcProgress(t);
+    save(); render();
+  }
+};
+
+/* انتقال کار بین بایگانی، زباله و فعال */
+function moveTask(id,to){
+  const i=data.tasks.findIndex(x=>x.id===id); if(i<0) return false;
+  const [t]=data.tasks.splice(i,1);
+  if(t.calEv && gcalReady()) Object.values(t.calEv).forEach(ev=>gcalApi('DELETE','/events/'+ev.id).catch(()=>{}));
+  t.calEv={}; t.movedAt=nowISO();
+  data[to]=data[to]||[]; data[to].unshift(t);
+  save(); return true;
+}
+function restoreTask(id,from){
+  const arr=data[from]||[]; const i=arr.findIndex(x=>x.id===id); if(i<0) return;
+  const [t]=arr.splice(i,1); delete t.movedAt; t.updatedAt=nowISO();
+  data.tasks.unshift(t); save(); renderExtra(); render(); toast('بازگردانده شد');
+}
+async function purgeTask(id){
+  const i=(data.trash||[]).findIndex(x=>x.id===id); if(i<0) return;
+  if(!confirm('حذف دائمی انجام شود؟ این کار قابل بازگشت نیست.')) return;
+  const [t]=data.trash.splice(i,1);
+  for(const a of (t.attachments||[])){ try{ await idbDel(a.id) }catch(e){} }
+  save(); renderExtra(); toast('حذف دائمی شد');
+}
+function renderExtra(){
+  const el=document.getElementById('extraBox'); if(!el||!extraMode) return;
+  const arr=data[extraMode]||[];
+  el.innerHTML=`<h4 class="muted">${extraMode==='archive'?'بایگانی':'سطل زباله'} (${fa(arr.length)})</h4>`+
+    (arr.map(t=>`<div class="stake-card" style="margin-bottom:6px"><b>${esc(t.title)}</b>
+      <div class="muted">${esc(t.status)}${t.movedAt?' · '+esc(toJalaliStr(t.movedAt).split(' · ')[0]):''}</div>
+      <div class="row" style="margin-top:6px"><button class="btn small ghost" type="button" data-action="xRestore" data-id="${esc(t.id)}">بازگردانی</button>${extraMode==='trash'?`<button class="btn small danger" type="button" data-action="xPurge" data-id="${esc(t.id)}">حذف دائمی</button>`:''}</div></div>`).join('')||'<span class="muted">موردی نیست</span>');
+}
+function archCurrent(){
+  const t=curTask(); if(!t) return toast('ابتدا کار را ذخیره کنید');
+  if(!confirm('کار بایگانی شود؟')) return;
+  moveTask(t.id,'archive'); closeTaskModal(); render(); renderExtra(); toast('بایگانی شد');
+}
+function duplicateCurrent(){
+  const t=curTask(); if(!t) return toast('ابتدا کار را ذخیره کنید');
+  const now=nowISO(); const c=JSON.parse(JSON.stringify(t));
+  c.id=uid(); c.title=t.title+' (کپی)'; c.status='جدید'; c.progress=0;
+  c.calEv={}; c.reminders=[]; c.reminder=''; c.notified=''; c.notifiedList=[];
+  c.attachments=[]; c.createdAt=now; c.updatedAt=now; delete c.movedAt; delete c.overdueDay;
+  c.subtasks=(c.subtasks||[]).map(s=>Object.assign({},s,{id:uid(),done:false}));
+  c.history=[{at:now,by:data.settings.name||'کاربر',text:'کپی از «'+t.title+'»'}];
+  data.tasks.unshift(c); save(); closeTaskModal(); render(); toast('کپی ساخته شد (پیوست‌ها کپی نمی‌شوند)');
+}
+function saveTemplateCurrent(){
+  const t=curTask();
+  const name=prompt('نام قالب:', t?t.title:(fTitle.value.trim()||'قالب جدید'));
+  if(!name||!name.trim()) return;
+  const now=Date.now(), daysFrom=iso=>iso?Math.round((new Date(iso).getTime()-now)/DAY):null;
+  const subs=(t?(t.subtasks||[]):subDraft).map(s=>({title:s.title,owner:s.owner||'',priority:s.priority||'عادی',note:s.note||'',dueDays:daysFrom(s.due)}));
+  const taskDue=t?t.due:'';
+  data.templates=data.templates||[];
+  data.templates.unshift({id:uid(),name:name.trim(),
+    title:t?t.title:fTitle.value.trim(),
+    priority:t?t.priority:(document.getElementById('fPri').value||'عادی'),
+    cat1:t?(t.cat1||'سایر'):(document.getElementById('fCat1').value||'سایر'),
+    desc:t?(t.desc||''):'',
+    owner:t?(t.owner||''):(document.getElementById('fOwner').value.trim()),
+    dueDays:daysFrom(taskDue),
+    subtasks:subs, createdAt:nowISO()});
+  save(); renderTemplateSelect(); toast('قالب ذخیره شد');
+}
+function renderTemplateSelect(){
+  const sel=document.getElementById('qaTpl'); if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">بدون قالب</option>'+(data.templates||[]).map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');
+  if((data.templates||[]).some(t=>t.id===cur)) sel.value=cur;
+}
+function quickAdd(){
+  const title=document.getElementById('qaTitle').value.trim();
+  if(!title){ toast('عنوان کار را بنویسید'); return }
+  const tplId=document.getElementById('qaTpl').value;
+  const tpl=tplId?(data.templates||[]).find(x=>x.id===tplId):null;
+  const now=Date.now(), at=days=>new Date(now+days*DAY).toISOString();
+  const nowS=nowISO();
+  const t={id:uid(),title,status:'جدید',priority:tpl?tpl.priority:'عادی',cat1:tpl?tpl.cat1:'سایر',cat2:'',
+    progress:0,desc:tpl?tpl.desc:'',owner:tpl?(tpl.owner||''):'',
+    due:tpl&&tpl.dueDays!=null?at(tpl.dueDays):'',
+    reminder:'',notified:'',reminders:[],
+    subtasks:(tpl?tpl.subtasks:[]).map(s=>({id:uid(),title:s.title,done:false,owner:s.owner||'',priority:s.priority||'عادی',note:s.note||'',due:s.dueDays!=null?at(s.dueDays):''})),
+    createdAt:nowS,updatedAt:nowS,history:[{at:nowS,by:data.settings.name||'کاربر',text:'ایجاد کار'}]};
+  t.progress=calcProgress(t);
+  data.tasks.unshift(t);
+  document.getElementById('qaTitle').value='';
+  save(); render(); toast('کار اضافه شد');
+}
+
+/* جستجوی سراسری (فقط داده‌های باز؛ شماره‌های بانکی رمزشده جستجو نمی‌شوند) */
+let gsResults=[];
+function globalSearch(q){
+  const nq=fxDigits(q).toLowerCase().replace(/\s+/g,' ').trim();
+  if(!nq) return [];
+  const norm=s=>fxDigits(String(s||'')).toLowerCase().replace(/\s+/g,' ');
+  const hit=(...vals)=>vals.some(v=>v!=null && norm(v).includes(nq));
+  const res=[];
+  const taskRow=(t,where)=>{
+    if(hit(t.title,t.desc,t.owner,t.cat1,t.priority,t.status)) res.push({k:where?'کار '+where:'کار',label:t.title,sub:t.status+(t.owner?' · '+t.owner:''),go:()=>{ if(where) setMode(where==='بایگانی'?'arch':'trash'); else openTaskModal(t.id) }});
+    (t.subtasks||[]).forEach(s=>{ if(hit(s.title)) res.push({k:'زیرکار',label:s.title,sub:'در: '+t.title,go:()=>openTaskModal(t.id)}) });
+  };
+  data.tasks.forEach(t=>taskRow(t,null));
+  (data.archive||[]).forEach(t=>taskRow(t,'بایگانی'));
+  (data.trash||[]).forEach(t=>taskRow(t,'سطل زباله'));
+  data.contacts.forEach(c=>{ if(hit(c.name,c.note,...(c.phones||[]))) res.push({k:'مخاطب',label:c.name,sub:(c.phones||[])[0]||'',go:()=>{ document.querySelector('[data-page="contacts"]').click(); openContactModal(c.id) }}) });
+  data.stakeholders.forEach(s=>{ if(hit(s.name,s.phone,s.note)) res.push({k:'ذی‌نفع',label:s.name,sub:s.phone||'',go:()=>{ document.querySelector('[data-page="stake"]').click() }}) });
+  CATS.forEach(c=>{ if(hit(c)) res.push({k:'دسته',label:c,sub:fa(data.tasks.filter(t=>t.cat1===c).length)+' کار فعال',go:()=>{ setMode('list') }}) });
+  return res.slice(0,50);
+}
+function renderSearch(){
+  const el=document.getElementById('gsRes'); if(!el) return;
+  const q=document.getElementById('gsQ').value;
+  gsResults=globalSearch(q);
+  if(!q.trim()){ el.innerHTML=''; return }
+  el.innerHTML=gsResults.length?gsResults.map((r,i)=>`<div class="bank-row" style="cursor:pointer" data-action="gsOpen" data-i="${i}"><span><b>${esc(r.label)}</b> <span class="muted">· ${esc(r.k)}</span></span><span class="muted">${esc(r.sub||'')}</span></div>`).join(''):'<div class="muted">نتیجه‌ای پیدا نشد</div>';
+}
+document.getElementById('gsQ').addEventListener('input',renderSearch);
+document.getElementById('qaTitle').addEventListener('keydown',e=>{ if(e.key==='Enter') quickAdd() });
+document.getElementById('subNew').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); addSub() } });
+
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-action]'); if(!a) return;
+  const act=a.dataset.action;
+  switch(act){
+    case 'addSub': addSub(); break;
+    case 'subToggle': { const s=subDraft[+a.dataset.i]; if(s){ s.done=!s.done; renderSubDraft() } break }
+    case 'subDel': subDraft.splice(+a.dataset.i,1); renderSubDraft(); break;
+    case 'dupTask': duplicateCurrent(); break;
+    case 'tplTask': saveTemplateCurrent(); break;
+    case 'archTask': archCurrent(); break;
+    case 'quickAdd': quickAdd(); break;
+    case 'viewArch': setMode('arch'); break;
+    case 'viewTrash': setMode('trash'); break;
+    case 'xRestore': restoreTask(a.dataset.id, extraMode); break;
+    case 'xPurge': purgeTask(a.dataset.id); break;
+    case 'gsOpen': { const r=gsResults[+a.dataset.i]; if(r) r.go(); break }
+  }
+});
+document.getElementById('autoProg').addEventListener('change',e=>{ e.target.dataset.touched='1' });
+
+/* ===== فاز ۳: مرکز یادآوری، صفحه اصلی سفارشی، ساعت سکوت ===== */
+const WIDGET_DEFS={today:'کارهای امروز',urgent:'کارهای فوری',overdue:'عقب‌افتاده',completed:'انجام‌شده امروز',progress:'پیشرفت امروز',next:'کار بعدی',reminders:'یادآوری‌های ۲۴ ساعت آینده',followups:'پیگیری‌ها',weekly:'عملکرد هفتگی'};
+function widgetOn(k){ const w=(data.settings&&data.settings.widgets)||{}; return w[k]!==false }
+function renderSmart(){
+  const el=document.getElementById('smartBox'); if(!el) return;
+  const now=Date.now(), today=todayKey();
+  const open=data.tasks.filter(t=>t.status!=='خاتمه یافته');
+  const dueToday=open.filter(t=>t.due && todayKey(new Date(t.due))===today);
+  const overdue=open.filter(t=>t.due && new Date(t.due).getTime()<now);
+  const urgent=open.filter(t=>['لحظه ای','فوری'].includes(t.priority));
+  const doneToday=data.tasks.concat(data.archive||[]).filter(t=>{const at=taskDoneAt(t); return at && todayKey(new Date(at))===today}).length;
+  const nextT=open.filter(t=>t.due && new Date(t.due).getTime()>=now).sort((a,b)=>a.due.localeCompare(b.due))[0];
+  const soon=[];
+  open.forEach(t=>taskReminders(t).forEach(r=>{ const x=new Date(r).getTime(); if(x>=now && x<now+DAY) soon.push({title:t.title,at:r}) }));
+  (data.personal||[]).filter(p=>!p.done).forEach(p=>{ const x=new Date(p.at).getTime(); if(x>=now && x<now+DAY) soon.push({title:p.title,at:p.at}) });
+  soon.sort((a,b)=>a.at.localeCompare(b.at));
+  const followups=open.filter(t=>t.status==='پیگیری');
+  const wk=rpData(7);
+  const list=(arr,n=4)=>arr.slice(0,n).map(t=>`<div class="muted" style="font-size:.84rem">• ${esc(t.title)}</div>`).join('')||'<div class="muted">—</div>';
+  const body={
+    today:`<div style="font-size:1.4rem;font-weight:700">${fa(dueToday.length)}</div>${list(dueToday)}`,
+    urgent:`<div style="font-size:1.4rem;font-weight:700">${fa(urgent.length)}</div>${list(urgent)}`,
+    overdue:`<div style="font-size:1.4rem;font-weight:700;color:#f0b4a4">${fa(overdue.length)}</div>${list(overdue)}`,
+    completed:`<div style="font-size:1.4rem;font-weight:700">${fa(doneToday)}</div>`,
+    progress:(()=>{ const tot=doneToday+dueToday.length; const p=tot?Math.round(doneToday*100/tot):0; return `<div style="font-size:1.4rem;font-weight:700">${fa(p)}٪</div><div class="bar" style="height:6px;background:rgba(255,255,255,.12);border-radius:6px;overflow:hidden"><i style="display:block;height:100%;width:${p}%;background:var(--mint)"></i></div>` })(),
+    next:nextT?`<div style="font-weight:700">${esc(nextT.title)}</div><div class="muted" style="font-size:.84rem">${esc(toJalaliStr(nextT.due))}</div>`:'<div class="muted">کار زمان‌دار بعدی نیست</div>',
+    reminders:soon.slice(0,5).map(s=>`<div class="muted" style="font-size:.84rem">• ${esc(s.title)} · ${esc(toJalaliStr(s.at).split(' · ')[1]||'')}</div>`).join('')||'<div class="muted">موردی نیست</div>',
+    followups:`<div style="font-size:1.4rem;font-weight:700">${fa(followups.length)}</div>${list(followups)}`,
+    weekly:`<div style="font-size:1.4rem;font-weight:700">${fa(wk.doneNow.length)}</div><div class="muted" style="font-size:.84rem">${wk.donePrev.length?(wk.doneNow.length>=wk.donePrev.length?'▲ ':'▼ ')+fa(Math.abs(wk.doneNow.length-wk.donePrev.length))+' نسبت به هفته قبل':'انجام‌شده در ۷ روز اخیر'}</div>`
+  };
+  el.innerHTML='<div class="stake-grid">'+Object.keys(WIDGET_DEFS).filter(widgetOn).map(k=>`<div class="stake-card"><div class="muted" style="font-size:.8rem;margin-bottom:4px">${WIDGET_DEFS[k]}</div>${body[k]}</div>`).join('')+'</div>';
+}
+function snoozeItem(kind,id,at,min){
+  const until=new Date(Date.now()+min*60000).toISOString();
+  if(kind==='personal'){
+    const p=(data.personal||[]).find(x=>x.id===id); if(!p) return;
+    p.at=until; p.notifiedAt='';
+  }else{
+    const t=data.tasks.find(x=>x.id===id); if(!t) return;
+    if(t.reminder===at) t.reminder=until;
+    t.reminders=(t.reminders||[]).map(r=>r===at?until:r);
+    t.notifiedList=(t.notifiedList||[]).filter(x=>x!==at);
+  }
+  save(); renderRemind(); toast('یادآوری '+fa(min)+' دقیقه بعد');
+}
+function doneItem(kind,id,at){
+  if(kind==='personal'){
+    const p=(data.personal||[]).find(x=>x.id===id); if(p) p.done=true;
+  }else{
+    const t=data.tasks.find(x=>x.id===id); if(!t) return;
+    if(t.reminder===at) t.reminder='';
+    t.reminders=(t.reminders||[]).filter(r=>r!==at);
+  }
+  save(); renderRemind(); toast('یادآوری انجام شد');
+}
+function addPersonal(){
+  const title=document.getElementById('pTitle').value.trim(), v=document.getElementById('pAt').value;
+  if(!title){ toast('عنوان را بنویسید'); return }
+  if(!v){ toast('تاریخ و ساعت را انتخاب کنید'); return }
+  data.personal=data.personal||[];
+  data.personal.push({id:uid(),title,at:new Date(v).toISOString(),kind:document.getElementById('pKind').value,
+    recur:document.getElementById('pRecur').value,done:false,notifiedAt:''});
+  document.getElementById('pTitle').value=''; document.getElementById('pAt').value='';
+  save(); renderRemind(); toast('یادآوری ثبت شد');
+}
+function renderRemind(){
+  const el=document.getElementById('remBody'); if(!el) return;
+  const now=Date.now(), today=todayKey();
+  const open=data.tasks.filter(t=>t.status!=='خاتمه یافته');
+  const overdue=open.filter(t=>t.due && new Date(t.due).getTime()<now);
+  const dueToday=open.filter(t=>t.due && todayKey(new Date(t.due))===today && new Date(t.due).getTime()>=now);
+  const follow=open.filter(t=>t.status==='پیگیری');
+  const items=[];
+  open.forEach(t=>taskReminders(t).forEach(r=>items.push({kind:'task',id:t.id,at:r,title:t.title,type:'یادآوری کار'})));
+  (data.personal||[]).filter(p=>!p.done).forEach(p=>items.push({kind:'personal',id:p.id,at:p.at,title:p.title,type:(p.kind||'شخصی')+(p.recur&&p.recur!=='none'?' · تکراری':'')}));
+  items.sort((a,b)=>a.at.localeCompare(b.at));
+  const taskRow=t=>`<div class="bank-row"><span><b>${esc(t.title)}</b> <span class="muted">· ${esc(t.status)}${t.due?' · مهلت: '+esc(toJalaliStr(t.due).split(' · ')[0]):''}</span></span><button class="btn small ghost" type="button" data-action="openTask" data-id="${esc(t.id)}">باز کردن</button></div>`;
+  const remRow=it=>`<div class="bank-row"><span><b>${esc(it.title)}</b> <span class="muted">· ${esc(it.type)} · ${esc(toJalaliStr(it.at))}</span></span><span class="row">
+      <button class="btn small ghost" type="button" data-action="rmSnooze" data-kind="${it.kind}" data-id="${esc(it.id)}" data-at="${esc(it.at)}" data-min="10">۱۰ دقیقه</button>
+      <button class="btn small ghost" type="button" data-action="rmSnooze" data-kind="${it.kind}" data-id="${esc(it.id)}" data-at="${esc(it.at)}" data-min="60">۱ ساعت</button>
+      <button class="btn small ghost" type="button" data-action="rmSnooze" data-kind="${it.kind}" data-id="${esc(it.id)}" data-at="${esc(it.at)}" data-min="1440">۱ روز</button>
+      <button class="btn small" type="button" data-action="rmDone" data-kind="${it.kind}" data-id="${esc(it.id)}" data-at="${esc(it.at)}">انجام شد</button></span></div>`;
+  const sec=(title,html)=>`<h4 class="muted" style="margin:12px 0 4px">${title}</h4>${html||'<div class="muted">موردی نیست</div>'}`;
+  el.innerHTML=sec('یادآوری‌ها و یادآوری‌های شخصی ('+fa(items.length)+')', items.map(remRow).join(''))
+    + sec('عقب‌افتاده ('+fa(overdue.length)+')', overdue.map(taskRow).join(''))
+    + sec('مهلت امروز ('+fa(dueToday.length)+')', dueToday.map(taskRow).join(''))
+    + sec('پیگیری‌ها ('+fa(follow.length)+')', follow.map(taskRow).join('')); 
+}
+function syncP3UI(){
+  const s=data.settings||{};
+  const q=s.quiet||{}; const qf=document.getElementById('qFrom'); if(qf){ qf.value=q.from||''; document.getElementById('qTo').value=q.to||'' }
+  const wb=document.getElementById('wgBox');
+  if(wb) wb.innerHTML=Object.keys(WIDGET_DEFS).map(k=>`<label style="display:flex;gap:.35rem;align-items:center;color:var(--text)"><input type="checkbox" id="wg_${k}" ${widgetOn(k)?'checked':''} style="width:auto"> ${WIDGET_DEFS[k]}</label>`).join('');
+}
+const _openTaskModalP3=openTaskModal;
+openTaskModal=function(...a){
+  _openTaskModalP3.apply(this,a);
+  const t=curTask(); document.getElementById('fRecur').value=(t&&t.recur)||'none';
+};
+const _saveTaskP3=saveTask;
+saveTask=async function(){
+  if(!fTitle.value.trim()) return _saveTaskP3();
+  const before=new Set(data.tasks.map(t=>t.id)); const editing=editTaskId;
+  await _saveTaskP3();
+  const id=editing||((data.tasks.find(t=>!before.has(t.id))||{}).id);
+  const t=data.tasks.find(x=>x.id===id);
+  if(t){ t.recur=document.getElementById('fRecur').value; save() }
+};
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-action]'); if(!a) return;
+  switch(a.dataset.action){
+    case 'rmSnooze': snoozeItem(a.dataset.kind,a.dataset.id,a.dataset.at,+a.dataset.min); break;
+    case 'rmDone': doneItem(a.dataset.kind,a.dataset.id,a.dataset.at); break;
+    case 'addPersonal': addPersonal(); break;
+    case 'openTask': openTaskModal(a.dataset.id); break;
+    case 'saveQuiet': {
+      const from=document.getElementById('qFrom').value, to=document.getElementById('qTo').value;
+      if((from&&!to)||(!from&&to)){ toast('هر دو ساعت شروع و پایان را وارد کنید'); break }
+      data.settings.quiet=from&&to?{from,to}:null; save(); toast('ساعت سکوت ذخیره شد'); break;
+    }
+    case 'saveWidgets': {
+      const w={}; Object.keys(WIDGET_DEFS).forEach(k=>{ w[k]=document.getElementById('wg_'+k).checked });
+      data.settings.widgets=w; save(); renderSmart(); toast('ویجت‌ها ذخیره شد'); break;
+    }
+  }
+});
+
+/* ===== فاز ۴: یادداشت‌ها (برچسب، پین، پیوند، جستجو) و حالت تمرکز (تایمر، پومودورو، تاریخچه) ===== */
+let ntEditId=null, ntLinks={tasks:[],contacts:[]};
+const NOTE_CATS=['عمومی'].concat(CATS);
+function ntCategories(){
+  const sel=document.getElementById('nCat'), selE=document.getElementById('nCatE');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">همه دسته‌ها</option>'+NOTE_CATS.map(c=>`<option>${esc(c)}</option>`).join('');
+  sel.value=cur;
+  selE.innerHTML=NOTE_CATS.map(c=>`<option>${esc(c)}</option>`).join('');
+}
+function ntTitleOf(kind,id){
+  if(kind==='task'){ const t=data.tasks.concat(data.archive||[],data.trash||[]).find(x=>x.id===id); return t?t.title:null }
+  const c=data.contacts.find(x=>x.id===id); return c?c.name:null;
+}
+function ntRender(){
+  const el=document.getElementById('noteList'); if(!el) return;
+  ntCategories();
+  const q=fxDigits(document.getElementById('nSearch').value).toLowerCase().trim();
+  const cat=document.getElementById('nCat').value;
+  const notes=(data.notes||[]).filter(n=>(!cat||n.category===cat) &&
+      (!q||[n.title,n.content,n.category,...(n.tags||[])].some(v=>fxDigits(String(v||'')).toLowerCase().includes(q))))
+    .sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||(b.updatedAt||'').localeCompare(a.updatedAt||''));
+  el.innerHTML=notes.length?notes.map(n=>{
+    const links=[...(n.linkTasks||[]).map(id=>({k:'کار',t:ntTitleOf('task',id)})),...(n.linkContacts||[]).map(id=>({k:'مخاطب',t:ntTitleOf('contact',id)}))];
+    return `<div class="stake-card" style="${n.pinned?'border-color:rgba(127,209,154,.6)':''}">
+      <div class="row" style="justify-content:space-between"><b>${n.pinned?'📌 ':''}${esc(n.title)}</b><span class="muted" style="font-size:.76rem">${esc(n.category||'')}</span></div>
+      ${(n.tags||[]).length?`<div style="margin:4px 0">${n.tags.map(t=>`<span class="chip-s">${esc(t)}</span>`).join('')}</div>`:''}
+      <div class="muted" style="white-space:pre-wrap;font-size:.86rem;max-height:6.2em;overflow:hidden">${esc((n.content||'').slice(0,300))}</div>
+      ${links.length?`<div class="muted" style="font-size:.78rem;margin-top:4px">پیوند: ${links.map(l=>esc(l.k)+'：'+esc(l.t||'(حذف شده)')).join(' · ')}</div>`:''}
+      <div class="row" style="margin-top:6px"><button class="btn small ghost" type="button" data-action="ntPin" data-id="${esc(n.id)}">${n.pinned?'برداشتن پین':'پین'}</button><button class="btn small ghost" type="button" data-action="ntEdit" data-id="${esc(n.id)}">ویرایش</button></div>
+    </div>`;
+  }).join(''):'<div class="muted">یادداشتی پیدا نشد</div>';
+}
+function ntFillLinkSelects(){
+  document.getElementById('nLinkTask').innerHTML=data.tasks.map(t=>`<option value="${esc(t.id)}">${esc(t.title)}</option>`).join('')||'<option value="">کاری نیست</option>';
+  document.getElementById('nLinkContact').innerHTML=data.contacts.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')||'<option value="">مخاطبی نیست</option>';
+}
+function ntRenderLinks(){
+  const el=document.getElementById('nLinks');
+  const chips=[...ntLinks.tasks.map(id=>({k:'task',id,label:'کار: '+(ntTitleOf('task',id)||'(حذف شده)')})),...ntLinks.contacts.map(id=>({k:'contact',id,label:'مخاطب: '+(ntTitleOf('contact',id)||'(حذف شده)')}))];
+  el.innerHTML=chips.length?chips.map(c=>`<span class="chip-s">${esc(c.label)} <button class="x" type="button" data-action="ntLinkDel" data-kind="${c.k}" data-id="${esc(c.id)}">×</button></span>`).join(''):'<span class="muted">پیوندی ثبت نشده</span>';
+}
+function ntOpen(id=null){
+  ntEditId=id; const n=id?(data.notes||[]).find(x=>x.id===id):null;
+  ntCategories();
+  document.getElementById('noteTitle').textContent=n?'ویرایش یادداشت':'یادداشت جدید';
+  document.getElementById('nTitle').value=n?n.title:'';
+  document.getElementById('nCatE').value=n?(n.category||'عمومی'):'عمومی';
+  document.getElementById('nTags').value=n?(n.tags||[]).join('، '):'';
+  document.getElementById('nContent').value=n?n.content:'';
+  document.getElementById('ntDelBtn').style.display=n?'inline-flex':'none';
+  ntLinks={tasks:n?(n.linkTasks||[]).slice():[],contacts:n?(n.linkContacts||[]).slice():[]};
+  ntFillLinkSelects(); ntRenderLinks();
+  document.getElementById('noteModal').classList.add('open');
+}
+function ntClose(){ document.getElementById('noteModal').classList.remove('open') }
+function ntSave(){
+  const title=document.getElementById('nTitle').value.trim(), content=document.getElementById('nContent').value;
+  if(!title && !content.trim()) return toast('عنوان یا متن یادداشت را بنویسید');
+  const tags=[...new Set(document.getElementById('nTags').value.split(/[،,]/).map(s=>s.trim()).filter(Boolean))];
+  const rec={title:title||'بدون عنوان',content,category:document.getElementById('nCatE').value,tags,
+    linkTasks:ntLinks.tasks.slice(),linkContacts:ntLinks.contacts.slice(),updatedAt:nowISO()};
+  data.notes=data.notes||[];
+  if(ntEditId){ const n=data.notes.find(x=>x.id===ntEditId); if(n) Object.assign(n,rec) }
+  else data.notes.unshift(Object.assign({id:uid(),pinned:false,createdAt:nowISO()},rec));
+  save(); ntClose(); ntRender(); toast('یادداشت ذخیره شد');
+}
+function ntDel(){
+  if(!ntEditId) return;
+  if(!confirm('یادداشت حذف شود؟')) return;
+  data.notes=(data.notes||[]).filter(x=>x.id!==ntEditId);
+  save(); ntClose(); ntRender(); toast('یادداشت حذف شد');
+}
+function ntPin(id){ const n=(data.notes||[]).find(x=>x.id===id); if(!n) return; n.pinned=!n.pinned; n.updatedAt=nowISO(); save(); ntRender() }
+
+/* تمرکز: تایمر مبتنی بر زمان واقعی (در بازخوانی صفحه هم ادامه می‌یابد) */
+const FC_WORK=25*60000, FC_BREAK=5*60000;
+let fcRun=(()=>{try{return JSON.parse(localStorage.getItem('dash_focus_run')||'null')}catch(e){return null}})();
+let fcTimer=null;
+function fcSave(){ if(fcRun) localStorage.setItem('dash_focus_run',JSON.stringify(fcRun)); else localStorage.removeItem('dash_focus_run') }
+function fcElapsed(){ if(!fcRun) return 0; return fcRun.acc+(fcRun.running?Date.now()-fcRun.since:0) }
+function fcArm(){ if(!fcTimer) fcTimer=setInterval(fcTick,1000) }
+function fcDisarm(){ clearInterval(fcTimer); fcTimer=null }
+function fcAddRecord(minutes,pomos){
+  if(!fcRun||minutes<=0) return;
+  const t=data.tasks.find(x=>x.id===fcRun.taskId);
+  data.focus=data.focus||[];
+  data.focus.unshift({id:uid(),taskId:fcRun.taskId,taskTitle:t?t.title:'(کار حذف‌شده)',at:nowISO(),minutes,pomodoros:pomos||0});
+  if(t){ t.spentMin=(+t.spentMin||0)+minutes; t.updatedAt=nowISO() }
+  save();
+}
+function fcPhaseDone(){
+  if(fcRun.phase==='work'){ fcAddRecord(FC_WORK/60000,1); fcRun.pomos=(fcRun.pomos||0)+1; fcRun.phase='break' }
+  else fcRun.phase='work';
+  fcRun.acc=0; fcRun.since=Date.now(); fcSave();
+  toast(fcRun.phase==='break'?'وقت استراحت ۵ دقیقه‌ای':'استراحت تمام شد؛ تمرکز ادامه دارد');
+  fcRender();
+}
+function fcTick(){
+  if(!fcRun||!fcRun.running){ fcDisarm(); return }
+  if(fcRun.pomo && fcElapsed()>=(fcRun.phase==='work'?FC_WORK:FC_BREAK)) return fcPhaseDone();
+  fcRenderClock();
+}
+function fcStart(){
+  const sel=document.getElementById('fcSel').value;
+  if(!fcRun){
+    if(!sel) return toast('یک کار انتخاب کنید');
+    fcRun={taskId:sel,pomo:document.getElementById('pomoOn').checked,phase:'work',acc:0,since:0,running:false,pomos:0,startedAt:nowISO()};
+  }
+  if(fcRun.running) return;
+  fcRun.running=true; fcRun.since=Date.now(); fcSave(); fcArm(); fcRender();
+}
+function fcPause(){
+  if(!fcRun||!fcRun.running) return;
+  fcRun.acc+=Date.now()-fcRun.since; fcRun.running=false; fcRun.since=0;
+  fcSave(); fcDisarm(); fcRender(); toast('متوقف شد');
+}
+function fcFinish(){
+  if(!fcRun) return;
+  const ms=fcElapsed();
+  if(fcRun.running){ fcRun.acc+=Date.now()-fcRun.since; }
+  const isBreak=fcRun.pomo && fcRun.phase==='break';
+  if(!isBreak) fcAddRecord(Math.round(fcRun.acc/60000),0);
+  fcRun=null; fcSave(); fcDisarm(); fcRender();
+  toast(ms>0?'جلسه تمرکز ثبت شد':'جلسه بدون زمان بسته شد');
+}
+function fmtMs(ms){ const s=Math.max(0,Math.floor(ms/1000)); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0') }
+function fcRenderClock(){
+  const c=document.getElementById('fcClock'); if(!c) return;
+  if(!fcRun){ c.textContent='00:00'; return }
+  c.textContent=fmtMs(fcRun.pomo?(fcRun.phase==='work'?FC_WORK:FC_BREAK)-fcElapsed():fcElapsed());
+}
+function fcRender(){
+  if(!document.getElementById('fcSel')) return;
+  const sel=document.getElementById('fcSel');
+  if(!fcRun){
+    const cur=sel.value;
+    sel.innerHTML=data.tasks.filter(t=>t.status!=='خاتمه یافته').map(t=>`<option value="${esc(t.id)}">${esc(t.title)}</option>`).join('')||'<option value="">کار فعالی نیست</option>';
+    if(cur) sel.value=cur;
+  }else{
+    sel.value=fcRun.taskId; sel.disabled=true;
+    document.getElementById('pomoOn').checked=!!fcRun.pomo; document.getElementById('pomoOn').disabled=true;
+  }
+  if(!fcRun){ sel.disabled=false; document.getElementById('pomoOn').disabled=false }
+  const t=fcRun?data.tasks.find(x=>x.id===fcRun.taskId):null;
+  document.getElementById('fcPhase').textContent=fcRun
+    ?(fcRun.pomo?(fcRun.phase==='work'?'تمرکز — پومودورو':'استراحت — پومودورو')+' · '+fa(fcRun.pomos||0)+' پومودورو':'تمرکز — شمارش رو به جلو')+(fcRun.running?'':' · متوقف')
+    :'آماده برای شروع';
+  document.getElementById('fcSum').textContent=t?('کار: '+t.title+' · زمان ثبت‌شده: '+fa(t.spentMin||0)+' دقیقه'):'یک کار را برای تمرکز انتخاب کنید';
+  document.getElementById('fcStartBtn').textContent=(fcRun&&!fcRun.running)?'ادامه':'شروع';
+  document.getElementById('fcStartBtn').disabled=!!(fcRun&&fcRun.running);
+  document.getElementById('fcPauseBtn').disabled=!(fcRun&&fcRun.running);
+  document.getElementById('fcFinishBtn').disabled=!fcRun;
+  fcRenderClock();
+  const today=todayKey(), h=(data.focus||[]);
+  const todayMin=h.filter(x=>todayKey(new Date(x.at))===today).reduce((s,x)=>s+(x.minutes||0),0);
+  document.getElementById('fcHist').innerHTML=`<div class="muted" style="margin-bottom:6px">امروز: ${fa(todayMin)} دقیقه · کل: ${fa(h.reduce((s,x)=>s+(x.minutes||0),0))} دقیقه</div>`+
+    (h.slice(0,15).map(x=>`<div class="bank-row"><span>${esc(x.taskTitle)}</span><span class="muted">${fa(x.minutes)} دقیقه${x.pomodoros?' · '+fa(x.pomodoros)+' پومودورو':''} · ${esc(toJalaliStr(x.at).split(' · ')[0])}</span></div>`).join('')||'<div class="muted">هنوز جلسه‌ای ثبت نشده</div>');
+}
+
+/* پیوند با جستجوی سراسری */
+const _globalSearchP4=globalSearch;
+globalSearch=function(q){
+  const r=_globalSearchP4(q);
+  const nq=fxDigits(q).toLowerCase().trim();
+  if(nq) (data.notes||[]).forEach(n=>{
+    if([n.title,n.content,...(n.tags||[])].some(v=>fxDigits(String(v||'')).toLowerCase().includes(nq)))
+      r.push({k:'یادداشت',label:n.title,sub:n.category||'',go:()=>{ document.querySelector('[data-page="notes"]').click(); ntOpen(n.id) }});
+  });
+  return r.slice(0,50);
+};
+
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-action]'); if(!a) return;
+  switch(a.dataset.action){
+    case 'ntNew': ntOpen(); break;
+    case 'ntEdit': ntOpen(a.dataset.id); break;
+    case 'ntPin': ntPin(a.dataset.id); break;
+    case 'ntSave': ntSave(); break;
+    case 'ntDel': ntDel(); break;
+    case 'ntClose': ntClose(); break;
+    case 'ntLinkTask': { const v=document.getElementById('nLinkTask').value; if(v&&!ntLinks.tasks.includes(v)) ntLinks.tasks.push(v); ntRenderLinks(); break }
+    case 'ntLinkContact': { const v=document.getElementById('nLinkContact').value; if(v&&!ntLinks.contacts.includes(v)) ntLinks.contacts.push(v); ntRenderLinks(); break }
+    case 'ntLinkDel': { const arr=a.dataset.kind==='task'?ntLinks.tasks:ntLinks.contacts; const i=arr.indexOf(a.dataset.id); if(i>=0) arr.splice(i,1); ntRenderLinks(); break }
+    case 'fcStart': fcStart(); break;
+    case 'fcPause': fcPause(); break;
+    case 'fcFinish': fcFinish(); break;
+  }
+});
+document.getElementById('nSearch').addEventListener('input',ntRender);
+document.getElementById('nCat').addEventListener('change',ntRender);
+
+/* ===== فاز ۵: وضعیت همگام‌سازی، تعارض‌ها، ارسال دستی ===== */
+const stripU=r=>{ const {updatedAt,...rest}=r; return rest };
+function getConflicts(){ try{return JSON.parse(localStorage.getItem('dash_conflicts')||'[]')}catch(e){return []} }
+function saveConflicts(list){ localStorage.setItem('dash_conflicts',JSON.stringify(list.slice(-50))) }
+// تعارض: هم نسخه محلی و هم نسخه ابری بعد از آخرین همگام‌سازی تغییر کرده‌اند (یا یکی حذف کرده)
+function detectConflicts(local,remote){
+  const last=localStorage.getItem('dash_last_sync'); if(!last) return;   // اولین اتصال: تعارض‌سنجی نمی‌شود
+  const arr=x=>Array.isArray(x)?x:(x?Object.values(x):[]);
+  const list=getConflicts(); let changed=false;
+  const add=(tb,lr,rr)=>{
+    if(list.some(c=>c.table===tb&&c.id===lr.id)) return;
+    list.push({table:tb,id:lr.id,at:nowISO(),local:lr,remote:rr}); changed=true;
+  };
+  TABLES.forEach(tb=>{
+    const rm=new Map(arr(remote[tb]).map(r=>[r.id,r]));
+    arr(local[tb]).forEach(lr=>{
+      if(!lr||lr.id==null) return;
+      const lChanged=(lr.updatedAt||'')>last;
+      if(!lChanged) return;
+      const rr=rm.get(lr.id);
+      if(rr){
+        if(hashStr(JSON.stringify(stripU(lr)))!==hashStr(JSON.stringify(stripU(rr))) && (rr.updatedAt||'')>last) add(tb,lr,rr);
+      }else{
+        const tomb=(remote.deleted||{})[tb+':'+lr.id];
+        if(tomb && tomb>(lr.updatedAt||'')) add(tb,lr,null);   // ابری حذف کرده، محلی ویرایش کرده
+      }
+    });
+  });
+  if(changed){ saveConflicts(list); renderConflicts() }
+}
+function renderCloudStatus(){
+  const el=document.getElementById('cloudStatus'); if(!el) return;
+  const last=localStorage.getItem('dash_last_sync');
+  const state=!getFbCfg()?'فقط این دستگاه':(!cloudReady?'ابر تنظیم نشده':(cloudPending?(cloudConnected?'در حال ارسال تغییرات':'آفلاین — تغییرات در صف است و بعد از اتصال ارسال می‌شود'):'همگام'));
+  el.innerHTML=`<div>وضعیت: <b>${esc(state)}</b></div>
+    <div class="muted">آخرین همگام‌سازی موفق: ${last?esc(toJalaliStr(last)):'—'}</div>
+    ${cloudLastError?`<div style="color:#f0b4a4">آخرین خطا: ${esc(cloudLastError)} — تلاش مجدد خودکار با فاصله بیشتر</div>`:''}
+    <div class="muted">تعارض‌های منتظر تصمیم: ${fa(getConflicts().length)}</div>`;
+}
+function renderConflicts(){
+  const el=document.getElementById('conflictBox'); if(!el) return;
+  const list=getConflicts();
+  if(!list.length){ el.innerHTML='<div class="muted">تعارضی وجود ندارد</div>'; return }
+  const label=tb=>({tasks:'کار',contacts:'مخاطب',stakeholders:'ذی‌نفع',notes:'یادداشت',personal:'یادآوری'})[tb]||tb;
+  const title=c=>(c.local&&(c.local.title||c.local.name))||(c.remote&&(c.remote.title||c.remote.name))||c.id;
+  el.innerHTML=list.map((c,i)=>`<div class="stake-card" style="margin-bottom:6px">
+    <div><b>${esc(label(c.table))}: ${esc(title(c))}</b> <span class="muted">· ${esc(toJalaliStr(c.at))}</span></div>
+    <div class="muted" style="font-size:.84rem">${c.remote===null?'این مورد در دستگاه دیگر حذف شده، ولی اینجا ویرایش شده است.':'این مورد هم اینجا و هم در دستگاه دیگر تغییر کرده است.'}</div>
+    <div class="row" style="margin-top:6px">
+      <button class="btn small" type="button" data-action="cfResolve" data-i="${i}" data-choice="local">نگه داشتن نسخه این دستگاه</button>
+      <button class="btn small ghost" type="button" data-action="cfResolve" data-i="${i}" data-choice="remote">${c.remote===null?'پذیرفتن حذف':'نسخه دستگاه دیگر'}</button>
+    </div></div>`).join('');
+}
+function resolveConflict(i,choice){
+  const list=getConflicts(); const c=list[i]; if(!c) return;
+  list.splice(i,1); saveConflicts(list);
+  const src=choice==='local'?c.local:c.remote;
+  if(src){
+    const arr=data[c.table]=data[c.table]||[];
+    const rec=Object.assign({},src,{updatedAt:nowISO()});
+    const k=arr.findIndex(x=>x.id===c.id);
+    if(k>=0) arr[k]=rec; else arr.push(rec);
+    save();
+  }
+  renderConflicts(); renderCloudStatus(); toast('تعارض حل شد');
+}
+function cloudSyncNow(){
+  if(!cloudReady){ toast('ابر تنظیم نشده است'); return }
+  clearTimeout(saveTimer); saveTimer=null; clearTimeout(cloudRetryTimer); cloudRetryN=0;
+  toast('در حال ارسال…');
+  sendCloud().then(()=>{ if(!cloudLastError) toast('همگام‌سازی انجام شد') });
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-action]'); if(!a) return;
+  if(a.dataset.action==='cloudNow') cloudSyncNow();
+  if(a.dataset.action==='cfResolve') resolveConflict(+a.dataset.i, a.dataset.choice);
+});
+
+load();
+if(applyAutoStatus())save();
+renderTemplateSelect();
+syncP3UI();
+ntCategories();
+if(fcRun&&fcRun.running) fcArm();
+nbSyncUI();
+nbStart();
+initCloud();
+initCal();
+askNotif();
+render();
+checkReminders(); setInterval(checkReminders,20000);
+loadEvents().then(()=>{if(page==='dash')render()});
+setInterval(()=>loadEvents().then(()=>{if(page==='dash')render()}),60*60*1000);
+if(window.jalaliDatepicker)jalaliDatepicker.startWatch();
+</script>
+</body>
+</html>
